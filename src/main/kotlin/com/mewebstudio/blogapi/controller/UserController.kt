@@ -30,6 +30,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindException
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -252,5 +253,41 @@ class UserController(
         @RequestBody @Validated request: CreateUserRequest
     ): ResponseEntity<UserResponse> {
         return ResponseEntity<UserResponse>(UserResponse.convert(userService.create(request)), HttpStatus.CREATED)
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+        summary = "Delete user by id endpoint",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Success operation",
+                content = [Content(schema = Schema(hidden = true))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Bad credentials",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not Found",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            )
+        ]
+    )
+    fun delete(
+        @Parameter(name = "id", description = "User ID", required = true)
+        @PathVariable("id") id: String
+    ): ResponseEntity<UserResponse> {
+        userService.delete(id)
+        return ResponseEntity.noContent().build()
     }
 }

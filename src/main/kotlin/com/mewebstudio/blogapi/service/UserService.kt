@@ -12,6 +12,8 @@ import com.mewebstudio.blogapi.security.JwtUserDetails
 import com.mewebstudio.blogapi.util.Enums
 import com.mewebstudio.blogapi.util.Helpers
 import com.mewebstudio.blogapi.util.PageRequestBuilder
+import com.mewebstudio.blogapi.util.logger
+import org.slf4j.Logger
 import org.springframework.data.domain.Page
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -25,8 +27,6 @@ import org.springframework.validation.BindException
 import org.springframework.validation.FieldError
 import java.time.LocalDateTime
 import java.util.*
-import com.mewebstudio.blogapi.util.logger
-import org.slf4j.Logger
 
 @Service
 class UserService(
@@ -272,5 +272,23 @@ class UserService(
         log.info("[Update profile] Profile updated: ${user.email} - ${user.id}")
 
         return user
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param id UUID
+     */
+    fun delete(id: UUID) {
+        userRepository.delete(findById(id))
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param id String
+     */
+    fun delete(id: String) {
+        delete(UUID.fromString(id))
     }
 }

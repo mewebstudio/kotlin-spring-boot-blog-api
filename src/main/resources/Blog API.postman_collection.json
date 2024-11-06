@@ -299,6 +299,36 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/{{user-id}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"{{user-id}}"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				}

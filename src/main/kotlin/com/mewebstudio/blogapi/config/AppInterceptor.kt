@@ -34,7 +34,6 @@ class AppInterceptor(private val authService: AuthService) : HandlerInterceptor 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val handlerMethod = handler as? HandlerMethod ?: return true
         validateQueryParams(request, handlerMethod)
-        log.info("q: ${request.getParameter("q")}")
         val authorizeAnnotation = getAuthorizeAnnotation(handlerMethod)
         if (authorizeAnnotation != null && !hasCheckRoleAnnotation(authorizeAnnotation)) {
             log.error("AccessDeniedException: Role is not valid for this API.")

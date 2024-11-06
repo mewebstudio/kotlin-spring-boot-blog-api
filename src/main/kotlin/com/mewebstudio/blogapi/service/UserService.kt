@@ -319,7 +319,6 @@ class UserService(
         }
 
         user.email = request.email?.lowercase() ?: user.email
-
         user.firstname = request.firstname ?: user.firstname
         user.lastname = request.lastname ?: user.lastname
         user.gender = request.gender?.let {

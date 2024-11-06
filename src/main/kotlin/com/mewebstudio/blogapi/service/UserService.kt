@@ -236,6 +236,7 @@ class UserService(
      * @return User
      */
     fun update(id: String, request: UpdateUserRequest): User {
+        log.info("[Update user] ID: $id - Request: $request")
         TODO("Not yet implemented")
     }
 

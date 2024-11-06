@@ -32,7 +32,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
+							"raw": "{\n    \"email\": \"mail@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -214,6 +214,26 @@
 										{
 											"key": "isBlocked",
 											"value": "false",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "asc",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt",
 											"disabled": true
 										},
 										{

@@ -2,6 +2,7 @@ package com.mewebstudio.blogapi.service
 
 import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateProfileRequest
+import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
 import com.mewebstudio.blogapi.entity.User
 import com.mewebstudio.blogapi.entity.specification.UserFilterSpecification
 import com.mewebstudio.blogapi.entity.specification.criteria.PaginationCriteria
@@ -225,6 +226,17 @@ class UserService(
         log.info("[Create user] User created: ${user.email} - ${user.id}")
 
         return user
+    }
+
+    /**
+     * Update user.
+     *
+     * @param id UUID
+     * @param request UpdateUserRequest
+     * @return User
+     */
+    fun update(id: String, request: UpdateUserRequest): User {
+        TODO("Not yet implemented")
     }
 
     /**

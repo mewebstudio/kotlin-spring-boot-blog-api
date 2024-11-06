@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.controller
 
 import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
+import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
 import com.mewebstudio.blogapi.dto.response.DetailedErrorResponse
 import com.mewebstudio.blogapi.dto.response.ErrorResponse
 import com.mewebstudio.blogapi.dto.response.user.UserPaginationResponse
@@ -32,6 +33,7 @@ import org.springframework.validation.BindException
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -253,6 +255,63 @@ class UserController(
         @RequestBody @Validated request: CreateUserRequest
     ): ResponseEntity<UserResponse> {
         return ResponseEntity<UserResponse>(UserResponse.convert(userService.create(request)), HttpStatus.CREATED)
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(
+        summary = "Update user by id endpoint",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Success operation",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = UserResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Bad request",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Bad credentials",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not Found",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "422",
+                description = "Validation Failed",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = DetailedErrorResponse::class)
+                )]
+            )
+        ]
+    )
+    @Throws(BindException::class)
+    fun update(
+        @Parameter(name = "id", description = "User ID", required = true)
+        @PathVariable("id") id: String,
+        @Parameter(description = "Request body to user update", required = true)
+        @RequestBody @Validated request: UpdateUserRequest
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(UserResponse.convert(userService.update(id, request)))
     }
 
     @DeleteMapping("/{id}")

@@ -175,14 +175,6 @@ class UserController(
                 )]
             ),
             ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = [Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = ErrorResponse::class)
-                )]
-            ),
-            ApiResponse(
                 responseCode = "401",
                 description = "Bad credentials",
                 content = [Content(

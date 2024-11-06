@@ -301,6 +301,45 @@
 							"response": []
 						},
 						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"DOE\",\n  \"gender\": \"male\",\n  \"email\": \"mail@example.com\",\n  \"password\": \"P@sswd123.\",\n  \"passwordConfirm\": \"P@sswd123.\",\n  \"isBlocked\": false,\n  \"roles\": [\n    \"admin\",\n    \"user\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/users/{{user-id}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"{{user-id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete",
 							"event": [
 								{

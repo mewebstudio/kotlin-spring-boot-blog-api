@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.service
 
 import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
+import com.mewebstudio.blogapi.dto.request.user.IUpdateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateProfileRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
 import com.mewebstudio.blogapi.entity.User
@@ -236,8 +237,21 @@ class UserService(
      * @return User
      */
     fun update(id: String, request: UpdateUserRequest): User {
+        val user = findById(id)
+        updateEqualFields(request, user)
+
+        if (request.roles.isNullOrEmpty().not()) {
+            user.roles = request.roles!!.map { it.uppercase() }
+        }
+
+        if (request.isBlocked != null) {
+            user.blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
+        }
+
+        userRepository.save(user)
         log.info("[Update user] ID: $id - Request: $request")
-        TODO("Not yet implemented")
+
+        return user
     }
 
     /**
@@ -248,7 +262,42 @@ class UserService(
      */
     fun updateProfile(request: UpdateProfileRequest): User {
         val user = getUser()
+        updateEqualFields(request, user)
 
+        userRepository.save(user)
+        log.info("[Update profile] Profile updated: ${user.email} - ${user.id}")
+
+        return user
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param id UUID
+     */
+    fun delete(id: UUID) {
+        userRepository.delete(findById(id))
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param id String
+     */
+    fun delete(id: String) {
+        delete(UUID.fromString(id))
+    }
+
+    /**
+     * Update equal fields.
+     *
+     * @param request IUpdateUserRequest
+     * @param user User
+     */
+    private fun updateEqualFields(
+        request: IUpdateUserRequest,
+        user: User
+    ) {
         val bindingResult = BeanPropertyBindingResult(request, "request")
         if (request.email.isNullOrEmpty().not() && request.email.equals(user.email, ignoreCase = true).not()) {
             userRepository.findByEmailAndIdNot(request.email!!.lowercase(), user.id!!)?.let {
@@ -280,28 +329,5 @@ class UserService(
         if (request.password != null) {
             user.password = passwordEncoder.encode(request.password)
         }
-
-        userRepository.save(user)
-        log.info("[Update profile] Profile updated: ${user.email} - ${user.id}")
-
-        return user
-    }
-
-    /**
-     * Delete user.
-     *
-     * @param id UUID
-     */
-    fun delete(id: UUID) {
-        userRepository.delete(findById(id))
-    }
-
-    /**
-     * Delete user.
-     *
-     * @param id String
-     */
-    fun delete(id: String) {
-        delete(UUID.fromString(id))
     }
 }

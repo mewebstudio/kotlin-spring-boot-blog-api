@@ -1,67 +1,68 @@
 package com.mewebstudio.blogapi.dto.request.user
 
-import com.mewebstudio.blogapi.dto.annotation.FieldMatch
 import com.mewebstudio.blogapi.dto.annotation.Password
+import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
+import com.mewebstudio.blogapi.util.Enums
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 
-@FieldMatch(first = "password", second = "passwordConfirm", message = "{password_mismatch}")
 data class UpdateProfileRequest(
     @Schema(
         name = "firstname",
         description = "Firstname",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "John"
     )
-    var firstname: String?,
+    override var firstname: String?,
 
     @Schema(
         name = "lastname",
         description = "Lastname",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "DOE"
     )
-    var lastname: String?,
+    override var lastname: String?,
 
+    @field:ValueOfEnum(enumClass = Enums.GenderEnum::class)
     @Schema(
         name = "gender",
-        description = "Gender of the user",
+        description = "Gender",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         allowableValues = ["male", "female", "diverse"],
         example = "male"
     )
-    var gender: String? = null,
+    override var gender: String?,
 
     @field:Email(message = "{invalid_email}")
     @Schema(
         name = "email",
         description = "E-mail",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "mail@example.com"
     )
-    var email: String?,
+    override var email: String?,
 
     @field:Password(message = "{invalid_password}")
     @Schema(
         name = "password",
         description = "Password",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "P@sswd123."
     )
-    var password: String? = null,
+    override var password: String? = null,
 
     @field:Password(message = "{invalid_password}")
     @Schema(
         name = "passwordConfirm",
         description = "Password confirmation",
         type = "String",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "P@sswd123."
     )
-    var passwordConfirm: String? = null,
-)
+    override var passwordConfirm: String? = null
+): IUpdateUserRequest

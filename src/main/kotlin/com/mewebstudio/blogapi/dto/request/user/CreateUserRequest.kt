@@ -36,7 +36,7 @@ data class CreateUserRequest(
     @field:ValueOfEnum(enumClass = Enums.GenderEnum::class)
     @Schema(
         name = "gender",
-        description = "Gender of the user",
+        description = "Gender",
         type = "String",
         requiredMode = Schema.RequiredMode.REQUIRED,
         allowableValues = ["male", "female", "diverse"],

@@ -4,11 +4,9 @@ import com.mewebstudio.blogapi.dto.annotation.MinListSize
 import com.mewebstudio.blogapi.dto.annotation.Password
 import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
 import com.mewebstudio.blogapi.util.Enums
-import com.mewebstudio.blogapi.dto.annotation.FieldMatch
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 
-@FieldMatch(first = "password", second = "passwordConfirm", message = "{password_mismatch}")
 data class UpdateUserRequest(
     @Schema(
         name = "firstname",
@@ -17,7 +15,7 @@ data class UpdateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "John"
     )
-    var firstname: String?,
+    override var firstname: String?,
 
     @Schema(
         name = "lastname",
@@ -26,18 +24,18 @@ data class UpdateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "DOE"
     )
-    var lastname: String?,
+    override var lastname: String?,
 
     @field:ValueOfEnum(enumClass = Enums.GenderEnum::class)
     @Schema(
         name = "gender",
-        description = "Gender of the user",
+        description = "Gender",
         type = "String",
         requiredMode = Schema.RequiredMode.REQUIRED,
         allowableValues = ["male", "female", "diverse"],
         example = "male"
     )
-    var gender: String?,
+    override var gender: String?,
 
     @field:Email(message = "{invalid_email}")
     @Schema(
@@ -47,7 +45,7 @@ data class UpdateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "mail@example.com"
     )
-    var email: String?,
+    override var email: String?,
 
     @field:Password(message = "{invalid_password}")
     @Schema(
@@ -57,7 +55,7 @@ data class UpdateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "P@sswd123."
     )
-    var password: String? = null,
+    override var password: String? = null,
 
     @field:Password(message = "{invalid_password}")
     @Schema(
@@ -67,7 +65,7 @@ data class UpdateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "P@sswd123."
     )
-    var passwordConfirm: String? = null,
+    override var passwordConfirm: String? = null,
 
     @field:MinListSize(min = 1, message = "{min_list_size}")
     @field:ValueOfEnum(enumClass = Enums.RoleEnum::class)
@@ -89,4 +87,4 @@ data class UpdateUserRequest(
         example = "false"
     )
     var isBlocked: Boolean? = false
-)
+) : IUpdateUserRequest

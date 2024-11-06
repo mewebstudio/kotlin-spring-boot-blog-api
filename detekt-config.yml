@@ -138,7 +138,6 @@ complexity:
     ignoreAnnotatedParameter: []
     excludes:
       - '**/entity/**'
-      - '**/controller/**'
       - '**/dto/**'
   MethodOverloading:
     active: false

@@ -4,6 +4,7 @@ import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.IUpdateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateProfileRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
+import com.mewebstudio.blogapi.dto.request.user.UserFilterRequest
 import com.mewebstudio.blogapi.entity.User
 import com.mewebstudio.blogapi.entity.specification.UserFilterSpecification
 import com.mewebstudio.blogapi.entity.specification.criteria.PaginationCriteria
@@ -59,12 +60,23 @@ class UserService(
     /**
      * Find all users with pagination.
      *
-     * @param criteria UserCriteria
-     * @param paginationCriteria PaginationCriteria
+     * @param request UserFilterRequest
      * @return Page<User>
      */
-    fun findAll(criteria: UserCriteria, paginationCriteria: PaginationCriteria): Page<User> {
-        return userRepository.findAll(UserFilterSpecification(criteria), PageRequestBuilder.build(paginationCriteria))
+    fun findAll(request: UserFilterRequest): Page<User> {
+        return userRepository.findAll(
+            UserFilterSpecification(
+                UserCriteria(
+                    roles = request.roles?.map { Helpers.searchEnum(Enums.RoleEnum::class.java, it)!! },
+                    genders = request.genders?.map { Helpers.searchEnum(Enums.GenderEnum::class.java, it)!! },
+                    createdAtStart = request.createdAtStart,
+                    createdAtEnd = request.createdAtEnd,
+                    isBlocked = request.isBlocked,
+                    q = request.q
+                )
+            ),
+            PageRequestBuilder.build(PaginationCriteria(request.page, request.size, request.sortBy, request.sort))
+        )
     }
 
     /**

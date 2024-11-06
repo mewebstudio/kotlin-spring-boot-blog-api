@@ -23,12 +23,6 @@ class ValueOfEnumValidator : ConstraintValidator<ValueOfEnum, Any?> {
         }
     }
 
-    /**
-     * Check value
-     *
-     * @param value CharSequence
-     * @return Boolean
-     */
     private fun checkValue(value: CharSequence): Boolean {
         return acceptedValues.contains(value.toString().lowercase()) ||
             acceptedValues.contains(value.toString().uppercase())

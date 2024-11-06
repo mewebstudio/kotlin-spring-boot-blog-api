@@ -52,18 +52,31 @@ class AppInterceptor(private val authService: AuthService) : HandlerInterceptor 
     private fun validateQueryParams(request: HttpServletRequest, handler: HandlerMethod) {
         val queryParams = Collections.list(request.parameterNames).toMutableList()
         val expectedParams = mutableListOf<String>()
+
+        // Fetch expected query params from method annotations (RequestParam and ModelAttribute)
         handler.methodParameters.forEach { methodParameter ->
             methodParameter.parameter.getAnnotation(RequestParam::class.java)?.let {
                 expectedParams.add(element = it.name)
             }
+
+            if (methodParameter.parameter.getAnnotation(ModelAttribute::class.java) != null) {
+                val modelAttributes = methodParameter.parameterType.declaredFields
+                modelAttributes.forEach { field ->
+                    expectedParams.add(field.name)
+                }
+            }
         }
 
-        val hasModelAttribute = handler.methodParameters.any {
-            it.getParameterAnnotation(ModelAttribute::class.java) != null
+        // Find extra params
+        val extraParams = queryParams.filter { param ->
+            !expectedParams.contains(param)
         }
 
+        // Remove expected params from queryParams
         queryParams.removeAll(expectedParams)
-        if (queryParams.isNotEmpty() && !hasModelAttribute) {
+
+        // If there are extra params, throw an exception
+        if (extraParams.isNotEmpty()) {
             log.error("Unexpected parameters: $queryParams")
             throw InvalidParameterException("Unexpected parameter: $queryParams")
         }

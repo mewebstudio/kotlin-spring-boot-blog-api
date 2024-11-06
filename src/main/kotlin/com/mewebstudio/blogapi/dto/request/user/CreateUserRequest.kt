@@ -38,7 +38,7 @@ data class CreateUserRequest(
         name = "gender",
         description = "Gender",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         allowableValues = ["male", "female", "diverse", "unknown"],
         example = "male"
     )

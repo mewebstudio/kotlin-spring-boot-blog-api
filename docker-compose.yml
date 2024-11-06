@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.2-bullseye
+    container_name: blog-api-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: blog_api
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - blog-api-network
+  redis:
+    image: redis:7.2.2-alpine
+    container_name: blog-api-redis
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass "secret"
+    volumes:
+      - redis-data:/data
+    ports:
+      - '6379:6379'
+    networks:
+      - blog-api-network
+  redis-commander:
+    image: rediscommander/redis-commander:redis-commander-210
+    restart: always
+    container_name: blog-api-redis-commander
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: default
+      REDIS_PASSWORD: secret
+      HTTP_USER: admin
+      HTTP_PASSWORD: secret
+    ports:
+      - '6380:8081'
+    networks:
+      - blog-api-network
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: blog-api-mailhog
+    restart: always
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+    networks:
+      - blog-api-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+
+networks:
+  blog-api-network:
+    driver: bridge

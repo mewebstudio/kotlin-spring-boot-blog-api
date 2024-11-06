@@ -1,0 +1,128 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
+
+spring:
+  application:
+    name: ${APP_NAME:blog-api}
+    description: ${APP_DESCRIPTION:Blog API}
+    version: ${APP_VERSION:1.0.0}
+    url: ${APP_URL:http://localhost:${server.port}}
+    secret: ${APP_SECRET:sTvHbWsBDSCwW5ZnxpPEx7B5ad2Zx60p}
+    default-locale: ${APP_DEFAULT_LOCALE:en}
+    default-timezone: ${APP_DEFAULT_TIMEZONE:Europe/Istanbul}
+    jwt:
+      token:
+        expires-in: ${APP_JWT_TOKEN_EXPIRES_IN:604800000} # 7 days in milliseconds
+      refresh-token:
+        expires-in: ${APP_JWT_REFRESH_TOKEN_EXPIRES_IN:1209600000} # 30 days in milliseconds
+      remember-me:
+        expires-in: ${APP_JWT_REMEMBER_ME_EXPIRES_IN:2592000000} # 14 days in milliseconds
+    password:
+      token:
+        expires-in: ${APP_REGISTRATION_PASSWORD_TOKEN_EXPIRES_IN:3600000} # 60 minutes in milliseconds
+  profiles:
+    active: ${APP_PROFILES_ACTIVE:dev}
+  devtools:
+    restart:
+      enabled: ${APP_DEVTOOLS_RESTART_ENABLED:true}
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_DDL_AUTO:update}
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        globally_quoted_identifiers: true
+        enable_lazy_load_no_trans: true
+        jdbc:
+          batch_size: 50
+          lob:
+            non_contextual_creation: true
+    open-in-view: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB:blog_api}
+    username: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:secret}
+  data:
+    redis:
+      database: ${REDIS_DATABASE:0}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:secret}
+      timeout: ${REDIS_TIMEOUT:60000}
+    web:
+      pageable:
+        default-page-size: ${PAGEABLE_DEFAULT_PAGE_SIZE:20}
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+  messages:
+    basename: locales.messages
+    encoding: UTF-8
+    cache-duration: ${MESSAGES_CACHE_DURATION:-1}
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:test@email.com}
+    password: ${MAIL_PASSWORD:}
+    sender: ${MAIL_SENDER:Partner Manager}
+    properties:
+      mail:
+        transport:
+          protocol: ${MAIL_PROTOCOL:smtp}
+        smtp:
+          auth: ${MAIL_AUTH:false}
+          ssl:
+            enable: ${MAIL_SSL:false}
+          tls:
+            enable: ${MAIL_TLS:false}
+
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+    operationsSorter: alpha
+    tagsSorter: alpha
+    path: ${SWAGGER_PATH:/swagger-ui}
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:always}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org:
+      springframework:
+        web: ${LOGGING_LEVEL_SPRING:INFO}
+        web.servlet.DispatcherServlet: ${LOGGING_LEVEL_SPRING_DISPATCHER_SERVLET:INFO}
+        security: ${LOGGING_LEVEL_SPRING_SECURITY:INFO}
+      hibernate:
+        type: ${LOGGING_LEVEL_HIBERNATE:INFO}
+        SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:INFO}
+      rabbitmq:
+        client: ${LOGGING_LEVEL_RABBITMQ:INFO}
+  file:
+    name: ./var/logs/app.log
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+  logback:
+    rollingpolicy:
+      file-name-pattern: ./var/logs/app.%d{yyyy-MM-dd}.%i.log

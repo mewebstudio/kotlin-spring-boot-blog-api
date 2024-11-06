@@ -294,10 +294,7 @@ class UserService(
      * @param request IUpdateUserRequest
      * @param user User
      */
-    private fun updateEqualFields(
-        request: IUpdateUserRequest,
-        user: User
-    ) {
+    private fun updateEqualFields(request: IUpdateUserRequest, user: User) {
         val bindingResult = BeanPropertyBindingResult(request, "request")
         if (request.email.isNullOrEmpty().not() && request.email.equals(user.email, ignoreCase = true).not()) {
             userRepository.findByEmailAndIdNot(request.email!!.lowercase(), user.id!!)?.let {

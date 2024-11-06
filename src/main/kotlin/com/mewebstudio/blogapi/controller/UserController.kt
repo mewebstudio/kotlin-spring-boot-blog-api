@@ -92,7 +92,7 @@ class UserController(
                 schema = Schema(type = "string", allowableValues = ["admin", "user"])
             )
         )
-        @RequestParam(required = false) roles: Array<String>?,
+        @RequestParam(name = "roles", required = false) roles: Array<String>?,
         @Parameter(
             name = "genders",
             description = "Genders",
@@ -101,21 +101,25 @@ class UserController(
                 schema = Schema(type = "string", allowableValues = ["male", "female", "diverse", "unknown"])
             )
         )
-        @RequestParam(required = false) genders: Array<String>?,
+        @RequestParam(name = "genders", required = false) genders: Array<String>?,
         @Parameter(name = "createdAtStart", description = "Created date start", example = "2024-10-25T22:54:58")
-        @RequestParam(required = false)
+        @RequestParam(name = "createdAtStart", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) createdAtStart: LocalDateTime?,
         @Parameter(name = "createdAtEnd", description = "Created date end", example = "2024-10-25T22:54:58")
-        @RequestParam(required = false)
+        @RequestParam(name = "createdAtEnd", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) createdAtEnd: LocalDateTime?,
         @Parameter(name = "isBlocked", description = "Is blocked?", example = "true")
-        @RequestParam(defaultValue = "false", required = false) isBlocked: Boolean,
+        @RequestParam(name = "isBlocked", defaultValue = "false", required = false) isBlocked: Boolean,
         @Parameter(name = "q", description = "Search keyword", example = "lorem")
-        @RequestParam(required = false) q: String?,
+        @RequestParam(name = "q", required = false) q: String?,
         @Parameter(name = "page", description = "Page number", example = "1")
-        @RequestParam(defaultValue = "1", required = false) page: Int,
+        @RequestParam(name = "page", defaultValue = "1", required = false) page: Int,
         @Parameter(name = "size", description = "Page size", example = "20")
-        @RequestParam(defaultValue = "\${spring.data.web.pageable.default-page-size}", required = false) size: Int,
+        @RequestParam(
+            name = "size",
+            defaultValue = "\${spring.data.web.pageable.default-page-size}",
+            required = false
+        ) size: Int,
         @Parameter(
             name = "sortBy", description = "Sort by column", example = "createdAt", schema = Schema(
                 type = "String",
@@ -124,13 +128,13 @@ class UserController(
                 ]
             )
         )
-        @RequestParam(defaultValue = "createdAt", required = false) sortBy: String,
+        @RequestParam(name = "sortBy", defaultValue = "createdAt", required = false) sortBy: String,
         @Parameter(
             name = "sort",
             description = "Sort direction",
             schema = Schema(type = "string", allowableValues = ["asc", "desc"], defaultValue = "asc")
         )
-        @RequestParam(defaultValue = "asc", required = false) @Pattern(regexp = "asc|desc") sort: String
+        @RequestParam(name = "sort", defaultValue = "asc", required = false) @Pattern(regexp = "asc|desc") sort: String
     ): ResponseEntity<UserPaginationResponse> {
         sortColumnCheck(messageSourceService, SORT_COLUMNS, sortBy)
 

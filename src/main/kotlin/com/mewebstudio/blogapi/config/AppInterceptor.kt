@@ -54,7 +54,7 @@ class AppInterceptor(private val authService: AuthService) : HandlerInterceptor 
         val queryParams = Collections.list(request.parameterNames).toMutableList()
         val expectedParams = mutableListOf<String>()
         handler.methodParameters.forEach { methodParameter ->
-            methodParameter.getParameterAnnotation(RequestParam::class.java)?.let {
+            methodParameter.parameter.getAnnotation(RequestParam::class.java)?.let {
                 expectedParams.add(element = it.name)
             }
         }

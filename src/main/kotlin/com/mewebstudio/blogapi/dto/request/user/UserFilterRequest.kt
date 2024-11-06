@@ -66,7 +66,7 @@ data class UserFilterRequest(
     )
     val q: String? = null,
 
-    @field:Min(value = 1, message = "{min_value_with_param}")
+    @field:Min(value = 1, message = "{min_value}")
     @field:Parameter(
         name = "page",
         description = "Page number",
@@ -74,7 +74,7 @@ data class UserFilterRequest(
     )
     val page: Int = 1,
 
-    @field:Min(value = 1, message = "{min_value_with_param}")
+    @field:Min(value = 1, message = "{min_value}")
     @field:Parameter(
         name = "size",
         description = "Page size",

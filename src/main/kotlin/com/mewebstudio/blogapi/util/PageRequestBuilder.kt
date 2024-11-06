@@ -1,6 +1,5 @@
 package com.mewebstudio.blogapi.util
 
-import com.mewebstudio.blogapi.entity.specification.criteria.PaginationCriteria
 import com.mewebstudio.blogapi.exception.BadRequestException
 import org.slf4j.Logger
 import org.springframework.data.domain.PageRequest
@@ -9,27 +8,30 @@ import org.springframework.data.domain.Sort
 object PageRequestBuilder {
     private val log: Logger by logger()
 
-    fun build(paginationCriteria: PaginationCriteria): PageRequest {
-        if (paginationCriteria.page == null || paginationCriteria.page!! < 1) {
+    fun build(
+        page: Int? = null,
+        size: Int? = null,
+        sortBy: String? = null,
+        sort: String? = null,
+        columns: Array<String>? = null): PageRequest {
+        if (page == null || page < 1) {
             log.warn("Page number is not valid")
             throw BadRequestException("Page must be greater than 0!")
         }
 
-        paginationCriteria.page = paginationCriteria.page!! - 1
-
-        if (paginationCriteria.size == null || paginationCriteria.size!! < 1) {
+        if (size == null || size < 1) {
             log.warn("Page size is not valid")
             throw BadRequestException("Size must be greater than 0!")
         }
 
-        var pageRequest = PageRequest.of(paginationCriteria.page!!, paginationCriteria.size!!)
+        var pageRequest = PageRequest.of(page - 1, size)
 
-        if (paginationCriteria.sortBy != null && paginationCriteria.sort != null) {
-            val direction = getDirection(paginationCriteria.sort!!)
+        if (sortBy != null && sort != null) {
+            val direction = getDirection(sort)
 
-            val columnsList = paginationCriteria.columns?.toList() ?: emptyList()
-            if (columnsList.contains(paginationCriteria.sortBy)) {
-                pageRequest = pageRequest.withSort(Sort.by(direction, paginationCriteria.sortBy))
+            val columnsList = columns?.toList() ?: emptyList()
+            if (columnsList.contains(sortBy)) {
+                pageRequest = pageRequest.withSort(Sort.by(direction, sortBy))
             }
         }
 

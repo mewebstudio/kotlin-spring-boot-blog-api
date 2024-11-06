@@ -7,7 +7,6 @@ import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UserFilterRequest
 import com.mewebstudio.blogapi.entity.User
 import com.mewebstudio.blogapi.entity.specification.UserFilterSpecification
-import com.mewebstudio.blogapi.entity.specification.criteria.PaginationCriteria
 import com.mewebstudio.blogapi.entity.specification.criteria.UserCriteria
 import com.mewebstudio.blogapi.exception.NotFoundException
 import com.mewebstudio.blogapi.repository.UserRepository
@@ -75,7 +74,7 @@ class UserService(
                     q = request.q
                 )
             ),
-            PageRequestBuilder.build(PaginationCriteria(request.page, request.size, request.sortBy, request.sort))
+            PageRequestBuilder.build(request.page, request.size, request.sortBy, request.sort)
         )
     }
 

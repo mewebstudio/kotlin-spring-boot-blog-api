@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Pattern
+import org.springframework.data.domain.Sort
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
@@ -92,16 +93,17 @@ data class UserFilterRequest(
         example = "createdAt",
         schema = Schema(
             type = "String",
-            allowableValues = ["id", "email", "firstname", "lastname", "gender", "blockedAt", "createdAt", "updatedAt"]
+            allowableValues = ["id", "email", "firstname", "lastname", "gender", "blockedAt", "createdAt", "updatedAt"],
+            defaultValue = "createdAt"
         )
     )
     val sortBy: String = "createdAt",
 
-    @field:Pattern(regexp = "asc|desc", message = "{invalid_sort_direction}")
+    @field:Pattern(regexp = "(?i)asc|desc", message = "{invalid_sort_direction}")
     @field:Parameter(
         name = "sort",
         description = "Sort direction",
         schema = Schema(type = "string", allowableValues = ["asc", "desc"], defaultValue = "asc")
     )
-    val sort: String = "asc"
+    val sort: String = Sort.Direction.ASC.name
 )

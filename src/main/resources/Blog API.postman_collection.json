@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "d97de48a-6767-49f3-a50d-cbf1f7bfdeb8",
+		"name": "Blog API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2079870",
+		"_collection_link": "https://lunar-capsule-667882.postman.co/workspace/Team-Workspace~4a00e7a1-03fc-466b-82c8-45cf6f1cd4c6/collection/2079870-d97de48a-6767-49f3-a50d-cbf1f7bfdeb8?action=share&source=collection_link&creator=2079870"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"token\", response.token);",
+									"pm.collectionVariables.set(\"refresh_token\", response.refreshToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/auth/login",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"token\", null);",
+									"pm.collectionVariables.set(\"refresh_token\", null);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/auth/logout",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registered",
+			"item": [
+				{
+					"name": "Account",
+					"item": [
+						{
+							"name": "Me",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/account/me",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"account",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update profile",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"DOE\",\n  \"gender\": \"male\",\n  \"email\": \"john@example.com\",\n  \"password\": \"P@sswd123.\",\n  \"passwordConfirm\": \"P@sswd123.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/account/update",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"account",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"pm.collectionVariables.set(\"user-id\", response.items[0].id);",
+											"if (response.items[0].avatar) {",
+											"    pm.collectionVariables.set(\"picture-path\", response.items[0].avatar.path);",
+											"}",
+											"",
+											"if (response.items.length > 1) {",
+											"    response.items.forEach((item, index) => {",
+											"        if (index !== 0) {",
+											"            pm.collectionVariables.set(`user-id${index + 1}`, item.id);",
+											"        }",
+											"    });",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users?q=test",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "test"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const   response    =   pm.response",
+											"        json        =   response.json()",
+											"pm.test(\"Status code is 201\", function () {",
+											"    response.to.have.status(201)",
+											"    pm.collectionVariables.set(\"user-id\", json.id)",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"DOE\",\n  \"gender\": \"male\",\n  \"email\": \"mail@example.com\",\n  \"password\": \"P@sswd123.\",\n  \"passwordConfirm\": \"P@sswd123.\",\n  \"isBlocked\": false,\n  \"roles\": [\n    \"admin\",\n    \"user\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/users",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/{{user-id}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"{{user-id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base",
+			"value": "http://0.0.0.0:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"key": "user-id",
+			"value": ""
+		},
+		{
+			"key": "user-id2",
+			"value": ""
+		}
+	]
+}

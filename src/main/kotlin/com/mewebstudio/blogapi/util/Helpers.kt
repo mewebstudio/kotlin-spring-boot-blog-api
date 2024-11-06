@@ -16,9 +16,9 @@ class Helpers private constructor() {
          * @return enum
          */
         fun <T : Enum<*>> searchEnum(enumeration: Class<T>, search: String, throwable: Boolean): T? {
-            for (each in enumeration.enumConstants) {
-                if (each.name.equals(search, ignoreCase = true)) {
-                    return each
+            for (e in enumeration.enumConstants) {
+                if (e.name.equals(search, ignoreCase = true)) {
+                    return e
                 }
             }
 

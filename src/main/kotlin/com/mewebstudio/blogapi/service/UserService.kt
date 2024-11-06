@@ -249,7 +249,7 @@ class UserService(
         }
 
         userRepository.save(user)
-        log.info("[Update user] ID: $id - Request: $request")
+        log.info("User updated: ${user.email} - ${user.id}")
 
         return user
     }
@@ -265,7 +265,7 @@ class UserService(
         updateEqualFields(request, user)
 
         userRepository.save(user)
-        log.info("[Update profile] Profile updated: ${user.email} - ${user.id}")
+        log.info("Profile updated: ${user.email} - ${user.id}")
 
         return user
     }
@@ -277,6 +277,7 @@ class UserService(
      */
     fun delete(id: UUID) {
         userRepository.delete(findById(id))
+        log.info("User deleted: $id")
     }
 
     /**
@@ -298,7 +299,7 @@ class UserService(
         val bindingResult = BeanPropertyBindingResult(request, "request")
         if (request.email.isNullOrEmpty().not() && request.email.equals(user.email, ignoreCase = true).not()) {
             userRepository.findByEmailAndIdNot(request.email!!.lowercase(), user.id!!)?.let {
-                log.error("[Update profile] User with email: ${request.email} already exists")
+                log.error("User with email: ${request.email} already exists")
                 bindingResult.addError(
                     FieldError(
                         bindingResult.objectName, "email",

@@ -3,6 +3,7 @@ package com.mewebstudio.blogapi.dto.response.user
 import com.mewebstudio.blogapi.dto.response.AbstractBaseResponse
 import com.mewebstudio.blogapi.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import java.time.LocalDateTime
 
 data class UserResponse(
@@ -10,6 +11,7 @@ data class UserResponse(
         name = "id",
         description = "ID",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         example = "91b2999d-d327-4dc8-9956-2fadc0dc8778"
     )
     val id: String,
@@ -18,6 +20,7 @@ data class UserResponse(
         name = "firstname",
         description = "Firstname",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         example = "John"
     )
     val firstname: String,
@@ -26,6 +29,7 @@ data class UserResponse(
         name = "lastname",
         description = "Lastname",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         example = "Doe"
     )
     val lastname: String,
@@ -34,8 +38,9 @@ data class UserResponse(
         name = "gender",
         description = "Gender",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         allowableValues = ["male", "female", "other"],
-        example = "Doe"
+        example = "male"
     )
     val gender: String,
 
@@ -43,6 +48,7 @@ data class UserResponse(
         name = "fullName",
         description = "Full name",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         example = "John Doe"
     )
     val fullName: String,
@@ -51,6 +57,7 @@ data class UserResponse(
         name = "email",
         description = "E-mail",
         type = "String",
+        requiredMode = RequiredMode.REQUIRED,
         example = "john@example.com"
     )
     val email: String,
@@ -59,6 +66,7 @@ data class UserResponse(
         name = "roles",
         description = "Roles",
         type = "Array",
+        requiredMode = RequiredMode.REQUIRED,
         example = "[\"user\"]"
     )
     val roles: Array<String>,
@@ -66,21 +74,24 @@ data class UserResponse(
     @Schema(
         name = "blockedAt",
         description = "Blocked at",
-        type = "LocalDateTime"
+        type = "LocalDateTime",
+        requiredMode = RequiredMode.NOT_REQUIRED
     )
     val blockedAt: LocalDateTime?,
 
     @Schema(
         name = "createdAt",
         description = "Created at",
-        type = "LocalDateTime"
+        type = "LocalDateTime",
+        requiredMode = RequiredMode.REQUIRED
     )
     val createdAt: LocalDateTime?,
 
     @Schema(
         name = "updatedAt",
         description = "Updated at",
-        type = "LocalDateTime"
+        type = "LocalDateTime",
+        requiredMode = RequiredMode.REQUIRED
     )
     val updatedAt: LocalDateTime?
 ) : AbstractBaseResponse() {

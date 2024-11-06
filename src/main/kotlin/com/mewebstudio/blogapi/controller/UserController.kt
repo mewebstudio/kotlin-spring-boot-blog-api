@@ -66,7 +66,7 @@ class UserController(
                 description = "Successful operation",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = UserResponse::class)
+                    schema = Schema(implementation = UserPaginationResponse::class)
                 )]
             ),
             ApiResponse(

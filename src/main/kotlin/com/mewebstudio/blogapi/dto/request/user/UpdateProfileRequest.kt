@@ -11,7 +11,7 @@ data class UpdateProfileRequest(
         name = "firstname",
         description = "Firstname",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "John"
     )
     override var firstname: String?,
@@ -20,7 +20,7 @@ data class UpdateProfileRequest(
         name = "lastname",
         description = "Lastname",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "DOE"
     )
     override var lastname: String?,
@@ -30,8 +30,8 @@ data class UpdateProfileRequest(
         name = "gender",
         description = "Gender",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
-        allowableValues = ["male", "female", "diverse"],
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        allowableValues = ["male", "female", "diverse", "unknown"],
         example = "male"
     )
     override var gender: String?,
@@ -41,7 +41,7 @@ data class UpdateProfileRequest(
         name = "email",
         description = "E-mail",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "mail@example.com"
     )
     override var email: String?,
@@ -51,7 +51,7 @@ data class UpdateProfileRequest(
         name = "password",
         description = "Password",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "P@sswd123."
     )
     override var password: String? = null,
@@ -61,7 +61,7 @@ data class UpdateProfileRequest(
         name = "passwordConfirm",
         description = "Password confirmation",
         type = "String",
-        requiredMode = Schema.RequiredMode.REQUIRED,
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "P@sswd123."
     )
     override var passwordConfirm: String? = null

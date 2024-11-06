@@ -39,7 +39,7 @@ data class CreateUserRequest(
         description = "Gender",
         type = "String",
         requiredMode = Schema.RequiredMode.REQUIRED,
-        allowableValues = ["male", "female", "diverse"],
+        allowableValues = ["male", "female", "diverse", "unknown"],
         example = "male"
     )
     var gender: String = Enums.GenderEnum.UNKNOWN.value,

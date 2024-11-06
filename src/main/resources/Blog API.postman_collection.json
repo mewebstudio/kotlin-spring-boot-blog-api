@@ -183,7 +183,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users?q=test",
+									"raw": "{{base}}/users",
 									"host": [
 										"{{base}}"
 									],
@@ -192,8 +192,34 @@
 									],
 									"query": [
 										{
+											"key": "roles",
+											"value": "admin,user",
+											"disabled": true
+										},
+										{
+											"key": "genders",
+											"value": "male,female,diverse,unknown",
+											"disabled": true
+										},
+										{
+											"key": "createdAtStart",
+											"value": "2023-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "createdAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "isBlocked",
+											"value": "false",
+											"disabled": true
+										},
+										{
 											"key": "q",
-											"value": "test"
+											"value": "doe",
+											"disabled": true
 										}
 									]
 								}
@@ -353,6 +379,10 @@
 		},
 		{
 			"key": "user-id2",
+			"value": ""
+		},
+		{
+			"key": "user-id3",
 			"value": ""
 		}
 	]

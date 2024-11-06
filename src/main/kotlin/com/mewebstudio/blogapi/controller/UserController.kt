@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindException
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -160,14 +161,51 @@ class UserController(
         )
     }
 
-    @GetMapping("/list")
-    fun list2(
-        @RequestParam(name = "q", required = false) q: String?
-    ): ResponseEntity<String> =
-        ResponseEntity.ok("Query: $q")
-            .also {
-                println("query: $q")
-            }
+    @GetMapping("/{id}")
+    @Operation(
+        summary = "Get user by id endpoint",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successful operation",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = UserResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Bad request",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Bad credentials",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not Found",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            )
+        ]
+    )
+    fun show(
+        @Parameter(name = "id", description = "User ID", required = true)
+        @PathVariable("id") id: String
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(UserResponse.convert(userService.findById(id)))
+    }
 
     @PostMapping
     @Operation(

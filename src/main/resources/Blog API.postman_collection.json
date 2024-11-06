@@ -271,7 +271,7 @@
 							"response": []
 						},
 						{
-							"name": "Create Copy",
+							"name": "Show",
 							"event": [
 								{
 									"listen": "test",

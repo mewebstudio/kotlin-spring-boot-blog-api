@@ -6,6 +6,7 @@ import com.mewebstudio.blogapi.dto.response.auth.TokenResponse
 import com.mewebstudio.blogapi.entity.JwtToken
 import com.mewebstudio.blogapi.entity.User
 import com.mewebstudio.blogapi.exception.NotFoundException
+import com.mewebstudio.blogapi.exception.TokenExpiredException
 import com.mewebstudio.blogapi.security.JwtTokenProvider
 import com.mewebstudio.blogapi.security.JwtUserDetails
 import com.mewebstudio.blogapi.util.Constants.TOKEN_HEADER
@@ -16,6 +17,7 @@ import org.slf4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -54,6 +56,18 @@ class AuthService(
         val jwtUserDetails = jwtTokenProvider.getPrincipal(authentication)
 
         return generateTokens(UUID.fromString(jwtUserDetails.id), request.rememberMe)
+    }
+
+    /**
+     * Refresh token from the bearer string.
+     *
+     * @param bearer String
+     * @return TokenResponse
+     * @throws TokenExpiredException
+     * @throws BadCredentialsException
+     */
+    fun refreshFromBearerString(bearer: String): TokenResponse? {
+        return refresh(jwtTokenProvider.extractJwtFromBearerString(bearer)!!)
     }
 
     /**
@@ -155,5 +169,37 @@ class AuthService(
                 refreshToken = jwtTokenProvider.getRefreshTokenExpiresIn()
             )
         )
+    }
+
+    /**
+     * Refresh token.
+     *
+     * @param refreshToken String
+     * @return TokenResponse
+     * @throws TokenExpiredException
+     * @throws BadCredentialsException
+     */
+    private fun refresh(refreshToken: String): TokenResponse {
+        log.info("Refresh request received: {}", refreshToken)
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            log.error("Refresh token is expired.")
+            throw TokenExpiredException()
+        }
+
+        val user = jwtTokenProvider.getUserFromToken(refreshToken)
+            ?: throw BadCredentialsException(messageSourceService.get("user_not_found"))
+        try {
+            val oldToken = jwtTokenService.findByUserIdAndRefreshToken(user.id!!, refreshToken)
+            if (oldToken.rememberMe) {
+                jwtTokenProvider.setRememberMe()
+            }
+
+            jwtTokenService.delete(oldToken)
+            return generateTokens(user.id!!, oldToken.rememberMe)
+        } catch (e: NotFoundException) {
+            log.error("Token not found with refresh token: ${e.message}")
+            throw BadCredentialsException(messageSourceService.get("bad_credentials"))
+        }
     }
 }

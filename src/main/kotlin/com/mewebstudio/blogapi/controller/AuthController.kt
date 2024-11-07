@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -66,6 +67,39 @@ class AuthController(
         @RequestBody @Validated request: LoginRequest
     ): ResponseEntity<TokenResponse> {
         return ResponseEntity.ok(authService.login(request))
+    }
+
+    @GetMapping("/refresh")
+    @Operation(
+        summary = "Refresh endpoint",
+        responses = [ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = [Content(
+                mediaType = "application/json",
+                schema = Schema(implementation = TokenResponse::class)
+            )]
+        ), ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = Schema(implementation = ErrorResponse::class)
+            )]
+        ), ApiResponse(
+            responseCode = "401",
+            description = "Bad credentials",
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = Schema(implementation = ErrorResponse::class)
+            )]
+        )]
+    )
+    fun refresh(
+        @Parameter(description = "Refresh token", required = true)
+        @RequestHeader("Authorization") @Validated refreshToken: String
+    ): ResponseEntity<TokenResponse> {
+        return ResponseEntity.ok(authService.refreshFromBearerString(refreshToken))
     }
 
     @GetMapping("/logout")

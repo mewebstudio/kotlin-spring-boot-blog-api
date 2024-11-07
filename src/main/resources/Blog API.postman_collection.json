@@ -11,6 +11,88 @@
 			"name": "Auth",
 			"item": [
 				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"DOE\",\n  \"gender\": \"male\",\n  \"email\": \"mail@example.com\",\n  \"password\": \"P@sswd123.\",\n  \"passwordConfirm\": \"P@sswd123.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/auth/register",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "E-mail verification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/auth/email-verification/",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"email-verification",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Login",
 					"event": [
 						{

@@ -33,7 +33,7 @@ class CustomAuthenticationManager(
      */
     @Transactional
     @Throws(AuthenticationException::class)
-    override fun authenticate(authentication: Authentication): Authentication {
+    override fun authenticate(authentication: Authentication): Authentication = run {
         val user: User = userService.findByEmail(authentication.name)
 
         if (Objects.nonNull(authentication.credentials)) {
@@ -51,6 +51,6 @@ class CustomAuthenticationManager(
         val auth = UsernamePasswordAuthenticationToken(userDetails, user.password, authorities)
         SecurityContextHolder.getContext().authentication = auth
 
-        return auth
+        auth
     }
 }

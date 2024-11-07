@@ -65,9 +65,7 @@ class AuthController(
     fun login(
         @Parameter(description = "Request body to login", required = true)
         @RequestBody @Validated request: LoginRequest
-    ): ResponseEntity<TokenResponse> {
-        return ResponseEntity.ok(authService.login(request))
-    }
+    ): ResponseEntity<TokenResponse> = ResponseEntity.ok(authService.login(request))
 
     @GetMapping("/refresh")
     @Operation(
@@ -98,9 +96,7 @@ class AuthController(
     fun refresh(
         @Parameter(description = "Refresh token", required = true)
         @RequestHeader("Authorization") @Validated refreshToken: String
-    ): ResponseEntity<TokenResponse> {
-        return ResponseEntity.ok(authService.refreshFromBearerString(refreshToken))
-    }
+    ): ResponseEntity<TokenResponse> = ResponseEntity.ok(authService.refreshFromBearerString(refreshToken))
 
     @GetMapping("/logout")
     @Operation(
@@ -125,9 +121,8 @@ class AuthController(
             )
         ]
     )
-    fun logout(): ResponseEntity<SuccessResponse> {
+    fun logout(): ResponseEntity<SuccessResponse> = run {
         authService.logout()
-
-        return ResponseEntity.ok(SuccessResponse(messageSourceService.get("logout_successfully")))
+        ResponseEntity.ok(SuccessResponse(messageSourceService.get("logout_successfully")))
     }
 }

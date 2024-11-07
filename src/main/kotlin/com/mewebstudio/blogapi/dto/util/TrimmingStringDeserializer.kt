@@ -14,7 +14,6 @@ class TrimmingStringDeserializer : JsonDeserializer<String>() {
     /**
      * Deserialize string with trimming.
      */
-    override fun deserialize(parser: JsonParser, deserializationContext: DeserializationContext): String {
-        return parser.valueAsString.trim()
-    }
+    override fun deserialize(parser: JsonParser, deserializationContext: DeserializationContext): String =
+        parser.valueAsString.trim()
 }

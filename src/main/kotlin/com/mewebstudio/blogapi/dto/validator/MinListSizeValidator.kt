@@ -11,11 +11,11 @@ class MinListSizeValidator : ConstraintValidator<MinListSize, List<String>> {
         min = constraintAnnotation.min
     }
 
-    override fun isValid(values: List<String>?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(values: List<String>?, context: ConstraintValidatorContext): Boolean = run {
         if (values == null) {
             return true
         }
 
-        return values.size >= min
+        values.size >= min
     }
 }

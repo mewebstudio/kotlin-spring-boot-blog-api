@@ -11,20 +11,18 @@ class ValueOfEnumValidator : ConstraintValidator<ValueOfEnum, Any?> {
         acceptedValues = annotation.enumClass.java.enumConstants.map { it.name }
     }
 
-    override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean = run {
         if (value == null) {
             return true
         }
 
-        return when (value) {
+        when (value) {
             is CharSequence -> checkValue(value)
             is List<*> -> value.all { it is CharSequence && checkValue(it) }
             else -> false
         }
     }
 
-    private fun checkValue(value: CharSequence): Boolean {
-        return acceptedValues.contains(value.toString().lowercase()) ||
-            acceptedValues.contains(value.toString().uppercase())
-    }
+    private fun checkValue(value: CharSequence): Boolean =
+        acceptedValues.contains(value.toString().lowercase()) || acceptedValues.contains(value.toString().uppercase())
 }

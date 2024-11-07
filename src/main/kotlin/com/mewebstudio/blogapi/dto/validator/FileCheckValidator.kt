@@ -16,7 +16,7 @@ class FileCheckValidator : ConstraintValidator<FileCheck, MultipartFile> {
         maxSize = constraintAnnotation.maxSize
     }
 
-    override fun isValid(multipartFile: MultipartFile?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(multipartFile: MultipartFile?, context: ConstraintValidatorContext): Boolean = run {
         if (multipartFile == null) {
             return true
         }
@@ -30,6 +30,6 @@ class FileCheckValidator : ConstraintValidator<FileCheck, MultipartFile> {
             return false
         }
 
-        return mimeTypes.contains(contentType)
+        mimeTypes.contains(contentType)
     }
 }

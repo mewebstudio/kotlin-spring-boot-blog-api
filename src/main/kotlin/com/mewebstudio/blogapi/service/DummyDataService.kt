@@ -24,7 +24,7 @@ class DummyDataService(private val userService: UserService) {
 
             userService.create(CreateUserRequest(
                 email = "john@example.com",
-                password = "Secret1.",
+                password = "P@sswd123.",
                 firstname = "John",
                 lastname = "Doe",
                 gender = Enums.GenderEnum.MALE.name,
@@ -33,7 +33,7 @@ class DummyDataService(private val userService: UserService) {
 
             userService.create(CreateUserRequest(
                 email = "jane@example.com",
-                password = "Secret1.",
+                password = "P@sswd123.",
                 firstname = "Jane",
                 lastname = "Doe",
                 gender = Enums.GenderEnum.FEMALE.name,

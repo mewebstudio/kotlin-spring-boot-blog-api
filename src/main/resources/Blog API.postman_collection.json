@@ -36,7 +36,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"P@sswd123.\",\n    \"rememberMe\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -214,19 +214,20 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const response = JSON.parse(responseBody);",
-											"pm.collectionVariables.set(\"user-id\", response.items[0].id);",
-											"if (response.items[0].avatar) {",
-											"    pm.collectionVariables.set(\"picture-path\", response.items[0].avatar.path);",
-											"}",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200)",
 											"",
-											"if (response.items.length > 1) {",
-											"    response.items.forEach((item, index) => {",
-											"        if (index !== 0) {",
-											"            pm.collectionVariables.set(`user-id${index + 1}`, item.id);",
-											"        }",
-											"    });",
-											"}",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"userId\", response.items[0].id);",
+											"",
+											"    if (response.items.length > 1) {",
+											"        response.items.forEach((item, index) => {",
+											"            if (index !== 0) {",
+											"                pm.collectionVariables.set(`userId${index + 1}`, item.id);",
+											"            }",
+											"        });",
+											"    }",
+											"})",
 											""
 										],
 										"type": "text/javascript",
@@ -308,11 +309,11 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"const   response    =   pm.response",
-											"        json        =   response.json()",
 											"pm.test(\"Status code is 201\", function () {",
-											"    response.to.have.status(201)",
-											"    pm.collectionVariables.set(\"user-id\", json.id)",
+											"    pm.response.to.have.status(201)",
+											"",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"userId\", response.id)",
 											"})",
 											""
 										],
@@ -363,13 +364,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/{{user-id}}",
+									"raw": "{{base}}/users/{{userId}}",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"{{user-id}}"
+										"{{userId}}"
 									]
 								}
 							},
@@ -402,13 +403,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base}}/users/{{user-id}}",
+									"raw": "{{base}}/users/{{userId}}",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"{{user-id}}"
+										"{{userId}}"
 									]
 								}
 							},
@@ -432,13 +433,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/{{user-id}}",
+									"raw": "{{base}}/users/{{userId}}",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"{{user-id}}"
+										"{{userId}}"
 									]
 								}
 							},
@@ -515,6 +516,10 @@
 		},
 		{
 			"key": "refreshToken",
+			"value": ""
+		},
+		{
+			"key": "userId",
 			"value": ""
 		}
 	]

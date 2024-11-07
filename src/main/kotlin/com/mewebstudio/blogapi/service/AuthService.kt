@@ -38,7 +38,7 @@ class AuthService(
      * Login user.
      * @param request LoginRequest
      */
-    fun login(request: LoginRequest): TokenResponse {
+    fun login(request: LoginRequest): TokenResponse = run {
         val badCredentialsMessage = messageSourceService.get("bad_credentials")
         try {
             val user = userService.findByEmail(request.email!!)
@@ -55,7 +55,7 @@ class AuthService(
         val authentication = authenticationManager.authenticate(authenticationToken)
         val jwtUserDetails = jwtTokenProvider.getPrincipal(authentication)
 
-        return generateTokens(UUID.fromString(jwtUserDetails.id), request.rememberMe)
+        generateTokens(UUID.fromString(jwtUserDetails.id), request.rememberMe)
     }
 
     /**
@@ -66,9 +66,8 @@ class AuthService(
      * @throws TokenExpiredException
      * @throws BadCredentialsException
      */
-    fun refreshFromBearerString(bearer: String): TokenResponse? {
-        return refresh(jwtTokenProvider.extractJwtFromBearerString(bearer)!!)
-    }
+    fun refreshFromBearerString(bearer: String): TokenResponse? =
+        refresh(jwtTokenProvider.extractJwtFromBearerString(bearer)!!)
 
     /**
      * Getting username from the security context.
@@ -78,11 +77,11 @@ class AuthService(
      * @throws AccessDeniedException -- if user does not have required roles
      */
     @Throws(AccessDeniedException::class)
-    fun isAuthorized(vararg roles: String?): Boolean {
+    fun isAuthorized(vararg roles: String?): Boolean = run {
         val jwtUserDetails = getPrincipal() ?: throw AccessDeniedException(messageSourceService.get("access_denied"))
 
         // Check if any of the user's authorities matches the provided roles
-        return roles.any { role ->
+        roles.any { role ->
             jwtUserDetails.authorities.any { authority ->
                 authority.authority.equals(role, ignoreCase = true)
             }
@@ -94,13 +93,13 @@ class AuthService(
      *
      * @return JwtUserDetails
      */
-    fun getPrincipal(): JwtUserDetails? {
+    fun getPrincipal(): JwtUserDetails? = run {
         val authentication = SecurityContextHolder.getContext().authentication
         try {
-            return authentication.principal as JwtUserDetails
+            authentication.principal as JwtUserDetails
         } catch (e: ClassCastException) {
             log.error("Exception while casting principal to JwtUserDetails, ${ExceptionUtils.getStackTrace(e)}")
-            return null
+            null
         }
     }
 
@@ -140,7 +139,7 @@ class AuthService(
      * @param rememberMe Boolean option to set the expiration time for refresh token
      * @return an object of TokenResponse
      */
-    private fun generateTokens(id: UUID, rememberMe: Boolean?): TokenResponse {
+    private fun generateTokens(id: UUID, rememberMe: Boolean?): TokenResponse = run {
         val token: String = jwtTokenProvider.generateJwt(id.toString())
         val refreshToken: String = jwtTokenProvider.generateRefresh(id.toString())
         val isRememberMe = rememberMe?.equals(true) == true
@@ -161,7 +160,7 @@ class AuthService(
 
         log.info("Token generated for user: {}", id)
 
-        return TokenResponse(
+        TokenResponse(
             token = token,
             refreshToken = refreshToken,
             expiresIn = TokenExpiresInResponse(
@@ -179,7 +178,7 @@ class AuthService(
      * @throws TokenExpiredException
      * @throws BadCredentialsException
      */
-    private fun refresh(refreshToken: String): TokenResponse {
+    private fun refresh(refreshToken: String): TokenResponse = run {
         log.info("Refresh request received: {}", refreshToken)
 
         if (!jwtTokenProvider.validateToken(refreshToken)) {
@@ -196,7 +195,7 @@ class AuthService(
             }
 
             jwtTokenService.delete(oldToken)
-            return generateTokens(user.id!!, oldToken.rememberMe)
+            generateTokens(user.id!!, oldToken.rememberMe)
         } catch (e: NotFoundException) {
             log.error("Token not found with refresh token: ${e.message}")
             throw BadCredentialsException(messageSourceService.get("bad_credentials"))

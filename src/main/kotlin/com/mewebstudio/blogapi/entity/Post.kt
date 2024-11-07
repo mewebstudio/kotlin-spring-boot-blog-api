@@ -106,18 +106,14 @@ data class Post(
 ) : AbstractBaseEntity() {
     constructor() : this(title = "", slug = "", content = "")
 
-    override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean = run {
         if (this === other) return true
         if (other !is Post) return false
 
-        return id == other.id
+        id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id, title = $title)"
-    }
+    override fun toString(): String = this::class.simpleName + "(id = $id, title = $title)"
 }

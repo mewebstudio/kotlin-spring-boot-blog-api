@@ -74,9 +74,9 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     )
     fun list(
         @ParameterObject @ModelAttribute @Validated request: UserFilterRequest
-    ): ResponseEntity<UserPaginationResponse> {
+    ): ResponseEntity<UserPaginationResponse> = run {
         val users: Page<User> = userService.findAll(request)
-        return ResponseEntity.ok(
+        ResponseEntity.ok(
             UserPaginationResponse(
                 page = request.page,
                 pages = users.totalPages,
@@ -121,9 +121,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     fun show(
         @Parameter(name = "id", description = "User ID", required = true)
         @PathVariable("id") id: String
-    ): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse.convert(userService.findById(id)))
-    }
+    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.findById(id)))
 
     @PostMapping
     @Operation(
@@ -176,9 +174,8 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     fun create(
         @Parameter(description = "Request body to user create", required = true)
         @RequestBody @Validated request: CreateUserRequest
-    ): ResponseEntity<UserResponse> {
-        return ResponseEntity<UserResponse>(UserResponse.convert(userService.create(request)), HttpStatus.CREATED)
-    }
+    ): ResponseEntity<UserResponse> =
+        ResponseEntity<UserResponse>(UserResponse.convert(userService.create(request)), HttpStatus.CREATED)
 
     @PatchMapping("/{id}")
     @Operation(
@@ -233,9 +230,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
         @PathVariable("id") id: String,
         @Parameter(description = "Request body to user update", required = true)
         @RequestBody @Validated request: UpdateUserRequest
-    ): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse.convert(userService.update(id, request)))
-    }
+    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.update(id, request)))
 
     @DeleteMapping("/{id}")
     @Operation(
@@ -268,8 +263,8 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     fun delete(
         @Parameter(name = "id", description = "User ID", required = true)
         @PathVariable("id") id: String
-    ): ResponseEntity<UserResponse> {
+    ): ResponseEntity<UserResponse> = run {
         userService.delete(id)
-        return ResponseEntity.noContent().build()
+        ResponseEntity.noContent().build()
     }
 }

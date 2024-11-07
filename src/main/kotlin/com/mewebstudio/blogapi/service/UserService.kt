@@ -43,18 +43,14 @@ class UserService(
      *
      * @return Authentication
      */
-    fun getAuthentication(): Authentication {
-        return SecurityContextHolder.getContext().authentication
-    }
+    fun getAuthentication(): Authentication = SecurityContextHolder.getContext().authentication
 
     /**
      * Count all users.
      *
      * @return Long
      */
-    fun count(): Long {
-        return userRepository.count()
-    }
+    fun count(): Long = userRepository.count()
 
     /**
      * Find all users with pagination.
@@ -62,8 +58,8 @@ class UserService(
      * @param request UserFilterRequest
      * @return Page<User>
      */
-    fun findAll(request: UserFilterRequest): Page<User> {
-        return userRepository.findAll(
+    fun findAll(request: UserFilterRequest): Page<User> =
+        userRepository.findAll(
             UserFilterSpecification(
                 UserCriteria(
                     roles = request.roles?.map { Helpers.searchEnum(Enums.RoleEnum::class.java, it)!! },
@@ -76,7 +72,6 @@ class UserService(
             ),
             PageRequestBuilder.build(request.page, request.size, request.sortBy, request.sort)
         )
-    }
 
     /**
      * Find user by email.
@@ -85,16 +80,13 @@ class UserService(
      * @return User
      * @throws NotFoundException
      */
-    fun findById(id: UUID): User {
-        return userRepository.findById(id)
-            .orElseThrow {
-                NotFoundException(
-                    messageSourceService.get(
-                        "not_found_with_param",
-                        arrayOf(messageSourceService.get("user"))
-                    )
-                )
-            }
+    fun findById(id: UUID): User = userRepository.findById(id).orElseThrow {
+        NotFoundException(
+            messageSourceService.get(
+                "not_found_with_param",
+                arrayOf(messageSourceService.get("user"))
+            )
+        )
     }
 
     /**
@@ -104,9 +96,7 @@ class UserService(
      * @return User
      * @throws NotFoundException
      */
-    fun findById(id: String): User {
-        return findById(UUID.fromString(id))
-    }
+    fun findById(id: String): User = findById(UUID.fromString(id))
 
     /**
      * Find a user by email.
@@ -114,11 +104,9 @@ class UserService(
      * @param email String.
      * @return User
      */
-    fun findByEmail(email: String): User {
-        return userRepository.findByEmail(email.lowercase()) ?: throw NotFoundException(
-            messageSourceService.get("not_found_with_param", arrayOf(messageSourceService.get("user")))
-        )
-    }
+    fun findByEmail(email: String): User = userRepository.findByEmail(email.lowercase()) ?: throw NotFoundException(
+        messageSourceService.get("not_found_with_param", arrayOf(messageSourceService.get("user")))
+    )
 
     /**
      * Load user details by username.
@@ -127,12 +115,12 @@ class UserService(
      * @return UserDetails
      * @throws UsernameNotFoundException email not found exception.
      */
-    fun loadUserByEmail(email: String): UserDetails {
+    fun loadUserByEmail(email: String): UserDetails = run {
         val user: User = userRepository.findByEmail(email.lowercase()) ?: throw NotFoundException(
             messageSourceService.get("not_found_with_param", arrayOf(messageSourceService.get("user")))
         )
 
-        return JwtUserDetails.create(user)
+        JwtUserDetails.create(user)
     }
 
     /**
@@ -142,7 +130,7 @@ class UserService(
      * @return UserDetails
      * @throws NotFoundException
      */
-    fun loadUserById(id: UUID): UserDetails {
+    fun loadUserById(id: UUID): UserDetails = run {
         val user = userRepository.findById(id)
             .orElseThrow {
                 NotFoundException(
@@ -153,7 +141,7 @@ class UserService(
                 )
             }
 
-        return JwtUserDetails.create(user)
+        JwtUserDetails.create(user)
     }
 
     /**
@@ -163,9 +151,7 @@ class UserService(
      * @return UserDetails
      * @throws NotFoundException
      */
-    fun loadUserById(id: String): UserDetails {
-        return loadUserById(UUID.fromString(id))
-    }
+    fun loadUserById(id: String): UserDetails = loadUserById(UUID.fromString(id))
 
     /**
      * Get UserDetails from security context.
@@ -173,24 +159,21 @@ class UserService(
      * @param authentication Wrapper for security context
      * @return the Principal being authenticated or the authenticated principal after authentication.
      */
-    fun getPrincipal(authentication: Authentication): JwtUserDetails {
-        return authentication.principal as JwtUserDetails
-    }
+    fun getPrincipal(authentication: Authentication): JwtUserDetails = authentication.principal as JwtUserDetails
 
     /**
      * Return the authenticated user.
      *
      * @return user User
      */
-    fun getUser(): User {
+    fun getUser(): User = run {
         val authentication = getAuthentication()
-
         if (!authentication.isAuthenticated) {
             log.warn("[JWT] User not authenticated!")
             throw BadCredentialsException(messageSourceService.get("bad_credentials"))
         }
 
-        return try {
+        try {
             findById(getPrincipal(authentication).id)
         } catch (e: Exception) {
             log.warn("[JWT] User details not found: ${e.message}")
@@ -271,14 +254,14 @@ class UserService(
      * @param request UpdateProfileRequest
      * @return User
      */
-    fun updateProfile(request: UpdateProfileRequest): User {
+    fun updateProfile(request: UpdateProfileRequest): User = run {
         val user = getUser()
         updateEqualFields(request, user)
 
         userRepository.save(user)
         log.info("Profile updated: ${user.email} - ${user.id}")
 
-        return user
+        user
     }
 
     /**

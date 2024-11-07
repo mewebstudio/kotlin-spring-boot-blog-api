@@ -20,40 +20,26 @@ class JwtUserDetails(
          * @param user User
          * @return JwtUserDetails
          */
-        fun create(user: User): JwtUserDetails {
+        fun create(user: User): JwtUserDetails = run {
             val authorities: List<GrantedAuthority> = user.roles.stream()
                 .map { role -> SimpleGrantedAuthority(role) }
                 .collect(Collectors.toList())
 
-            return JwtUserDetails(user.id.toString(), user.email, user.password, authorities)
+            JwtUserDetails(user.id.toString(), user.email, user.password, authorities)
         }
     }
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return authorities.toMutableList()
-    }
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities.toMutableList()
 
-    override fun getPassword(): String {
-        return "{noop}$password"
-    }
+    override fun getPassword(): String = "{noop}$password"
 
-    override fun getUsername(): String {
-        return username
-    }
+    override fun getUsername(): String = username
 
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
+    override fun isAccountNonExpired(): Boolean = true
 
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
+    override fun isAccountNonLocked(): Boolean = true
 
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
+    override fun isCredentialsNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    override fun isEnabled(): Boolean = true
 }

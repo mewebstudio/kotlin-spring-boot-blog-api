@@ -96,32 +96,28 @@ data class UserResponse(
     val updatedAt: LocalDateTime?
 ) : AbstractBaseResponse() {
     companion object {
-        fun convert(user: User): UserResponse {
-            return UserResponse(
-                id = user.id.toString(),
-                firstname = user.firstname,
-                lastname = user.lastname,
-                fullName = user.fullName,
-                gender = user.gender.value,
-                email = user.email,
-                roles = user.roles.stream().map { it.lowercase() }.toArray { size -> arrayOfNulls(size) },
-                blockedAt = user.blockedAt,
-                createdAt = user.createdAt,
-                updatedAt = user.updatedAt
-            )
-        }
+        fun convert(user: User): UserResponse = UserResponse(
+            id = user.id.toString(),
+            firstname = user.firstname,
+            lastname = user.lastname,
+            fullName = user.fullName,
+            gender = user.gender.value,
+            email = user.email,
+            roles = user.roles.stream().map { it.lowercase() }.toArray { size -> arrayOfNulls(size) },
+            blockedAt = user.blockedAt,
+            createdAt = user.createdAt,
+            updatedAt = user.updatedAt
+        )
     }
 
-    override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean = run {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as UserResponse
 
-        return id == other.id
+        id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 }

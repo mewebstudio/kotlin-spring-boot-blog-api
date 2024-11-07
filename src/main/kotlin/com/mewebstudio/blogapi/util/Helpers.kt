@@ -36,9 +36,8 @@ class Helpers private constructor() {
          * @param search      name of the enum
          * @return enum
          */
-        fun <T : Enum<*>> searchEnum(enumeration: Class<T>, search: String): T? {
-            return searchEnum(enumeration, search, false)
-        }
+        fun <T : Enum<*>> searchEnum(enumeration: Class<T>, search: String): T? =
+            searchEnum(enumeration, search, false)
 
         /**
          * Parse JSON content

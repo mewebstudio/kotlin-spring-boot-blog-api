@@ -22,7 +22,7 @@ class FieldMatchValidator : ConstraintValidator<FieldMatch, Any> {
         message = constraintAnnotation.message
     }
 
-    override fun isValid(obj: Any, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(obj: Any, context: ConstraintValidatorContext): Boolean = run {
         var valid = true
         try {
             val firstProperty = obj::class.memberProperties.find { it.name == firstField }
@@ -43,6 +43,6 @@ class FieldMatchValidator : ConstraintValidator<FieldMatch, Any> {
                 .disableDefaultConstraintViolation()
         }
 
-        return valid
+        valid
     }
 }

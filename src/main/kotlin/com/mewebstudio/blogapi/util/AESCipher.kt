@@ -17,13 +17,13 @@ object AESCipher {
      * @return String - Base64 encoded string of the encrypted text.
      */
     @Throws(Exception::class)
-    fun encrypt(plainText: String, secretKey: String): String {
+    fun encrypt(plainText: String, secretKey: String): String = run {
         val keySpec = generateKey(secretKey)
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, keySpec)
         val encryptedBytes = cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
 
-        return Base64.getEncoder().encodeToString(encryptedBytes)
+        Base64.getEncoder().encodeToString(encryptedBytes)
     }
 
     /**
@@ -34,14 +34,14 @@ object AESCipher {
      * @return String  - Decrypted text.
      */
     @Throws(Exception::class)
-    fun decrypt(encryptedText: String, secretKey: String): String {
+    fun decrypt(encryptedText: String, secretKey: String): String = run {
         val keySpec = generateKey(secretKey)
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.DECRYPT_MODE, keySpec)
         val encryptedBytes = Base64.getDecoder().decode(encryptedText)
         val decryptedBytes = cipher.doFinal(encryptedBytes)
 
-        return String(decryptedBytes, StandardCharsets.UTF_8)
+        String(decryptedBytes, StandardCharsets.UTF_8)
     }
 
     /**
@@ -50,8 +50,6 @@ object AESCipher {
      * @param secretKey String - The key that will be used for encryption and decryption.
      * @return SecretKeySpec - The secret key spec.
      */
-    private fun generateKey(secretKey: String): SecretKeySpec {
-        val keyBytes = secretKey.toByteArray(StandardCharsets.UTF_8)
-        return SecretKeySpec(keyBytes, ALGORITHM)
-    }
+    private fun generateKey(secretKey: String): SecretKeySpec =
+        SecretKeySpec(secretKey.toByteArray(StandardCharsets.UTF_8), ALGORITHM)
 }

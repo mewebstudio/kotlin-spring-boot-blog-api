@@ -20,9 +20,9 @@ class MessageSourceService(private val messageSource: MessageSource?) {
      * @param locale Locale
      * @return message String
      */
-    fun get(code: String, params: Array<String>?, locale: Locale?): String {
+    fun get(code: String, params: Array<String>?, locale: Locale?): String = run {
         try {
-            return messageSource!!.getMessage(code, params, locale!!)
+            messageSource!!.getMessage(code, params, locale!!)
         } catch (e: NoSuchMessageException) {
             log.warn("Translation message not found ($locale): $code / ${e.message}")
             return code
@@ -36,9 +36,7 @@ class MessageSourceService(private val messageSource: MessageSource?) {
      * @param params Object[]
      * @return message String
      */
-    fun get(code: String, params: Array<String>): String {
-        return get(code, params, LocaleContextHolder.getLocale())
-    }
+    fun get(code: String, params: Array<String>): String = get(code, params, LocaleContextHolder.getLocale())
 
     /**
      * Get message from message source by key.
@@ -47,9 +45,7 @@ class MessageSourceService(private val messageSource: MessageSource?) {
      * @param locale Locale
      * @return message String
      */
-    fun get(code: String, locale: Locale?): String {
-        return get(code, null, locale)
-    }
+    fun get(code: String, locale: Locale?): String = get(code, null, locale)
 
     /**
      * Get message from message source by key.
@@ -57,7 +53,5 @@ class MessageSourceService(private val messageSource: MessageSource?) {
      * @param code String
      * @return message String
      */
-    fun get(code: String): String {
-        return get(code, null, LocaleContextHolder.getLocale())
-    }
+    fun get(code: String): String = get(code, null, LocaleContextHolder.getLocale())
 }

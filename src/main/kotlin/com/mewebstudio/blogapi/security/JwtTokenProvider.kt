@@ -53,7 +53,7 @@ class JwtTokenProvider(
      * @param expires Long
      * @return String
      */
-    fun generateTokenByUserId(id: String, expires: Long): String {
+    fun generateTokenByUserId(id: String, expires: Long): String = run {
         val claims = Jwts.claims().setSubject(id)
         claims["custom_field"] = "custom_value"
         val token = Jwts.builder()
@@ -65,7 +65,7 @@ class JwtTokenProvider(
             .compact()
         log.trace("Token is added to the local cache for userID: {}, ttl: {}", id, expires)
 
-        return token
+        token
     }
 
     /**
@@ -74,9 +74,7 @@ class JwtTokenProvider(
      * @param id String
      * @return String
      */
-    fun generateJwt(id: String): String {
-        return generateTokenByUserId(id, tokenExpiresIn)
-    }
+    fun generateJwt(id: String): String = generateTokenByUserId(id, tokenExpiresIn)
 
     /**
      * Generate refresh token by user ID.
@@ -84,9 +82,7 @@ class JwtTokenProvider(
      * @param id String
      * @return String
      */
-    fun generateRefresh(id: String): String {
-        return generateTokenByUserId(id, refreshTokenExpiresIn)
-    }
+    fun generateRefresh(id: String): String = generateTokenByUserId(id, refreshTokenExpiresIn)
 
     /**
      * Get JwtUserDetails from authentication.
@@ -94,9 +90,7 @@ class JwtTokenProvider(
      * @param authentication Authentication
      * @return JwtUserDetails
      */
-    fun getPrincipal(authentication: Authentication): JwtUserDetails {
-        return userService.getPrincipal(authentication)
-    }
+    fun getPrincipal(authentication: Authentication): JwtUserDetails = userService.getPrincipal(authentication)
 
     /**
      * Get user ID from token.
@@ -104,10 +98,9 @@ class JwtTokenProvider(
      * @param token String
      * @return String
      */
-    fun getUserIdFromToken(token: String): String {
+    fun getUserIdFromToken(token: String): String = run {
         val claims = parseToken(token).body
-
-        return claims.subject
+        claims.subject
     }
 
     /**
@@ -159,7 +152,7 @@ class JwtTokenProvider(
      * @param httpServletRequest HttpServletRequest
      * @return boolean
      */
-    fun validateToken(token: String, httpServletRequest: HttpServletRequest): Boolean {
+    fun validateToken(token: String, httpServletRequest: HttpServletRequest): Boolean = run {
         var isValidToken = false
 
         try {
@@ -182,7 +175,7 @@ class JwtTokenProvider(
             httpServletRequest.setAttribute("illegal", "JWT claims string is empty.")
         }
 
-        return isValidToken
+        isValidToken
     }
 
     /**
@@ -212,27 +205,22 @@ class JwtTokenProvider(
      * @param request HttpServletRequest object to get Authorization header
      * @return String value of bearer token or null
      */
-    fun extractJwtFromRequest(request: HttpServletRequest): String? {
-        return (request.getHeader(TOKEN_HEADER) ?: null)?.let { extractJwtFromBearerString(it) }
-    }
+    fun extractJwtFromRequest(request: HttpServletRequest): String? =
+        (request.getHeader(TOKEN_HEADER) ?: null)?.let { extractJwtFromBearerString(it) }
 
     /**
      * Get token expires in.
      *
      * @return Long
      */
-    fun getTokenExpiresIn(): Long {
-        return tokenExpiresIn
-    }
+    fun getTokenExpiresIn(): Long = tokenExpiresIn
 
     /**
      * Get refresh token expires in.
      *
      * @return Long
      */
-    fun getRefreshTokenExpiresIn(): Long {
-        return refreshTokenExpiresIn
-    }
+    fun getRefreshTokenExpiresIn(): Long = refreshTokenExpiresIn
 
     /**
      * Parsing token.
@@ -241,8 +229,8 @@ class JwtTokenProvider(
      * @return Jws object
      */
     private fun parseToken(token: String): Jws<Claims> {
-        try {
-            return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
+        return try {
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
         } catch (e: SignatureException) {
             log.error("[JWT] Token is invalid: ${e.message}")
             throw BadCredentialsException("Token is invalid")
@@ -255,25 +243,19 @@ class JwtTokenProvider(
      * @param token String jwt token to get expiration date
      * @return True or False
      */
-    private fun isTokenExpired(token: String): Boolean {
-        return parseToken(token).body.expiration.before(Date())
-    }
+    private fun isTokenExpired(token: String): Boolean = parseToken(token).body.expiration.before(Date())
 
     /**
      * Get expire date.
      *
      * @return Date object
      */
-    private fun getExpireDate(expires: Long): Date {
-        return Date(Date().time + expires)
-    }
+    private fun getExpireDate(expires: Long): Date = Date(Date().time + expires)
 
     /**
      * Get signing key.
      *
      * @return Key
      */
-    private fun getSigningKey(): Key {
-        return Keys.hmacShaKeyFor(appSecret.toByteArray())
-    }
+    private fun getSigningKey(): Key = Keys.hmacShaKeyFor(appSecret.toByteArray())
 }

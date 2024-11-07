@@ -39,7 +39,7 @@ class JwtAuthenticationEntryPoint(
      * @param e       AuthenticationException
      * @return String
      */
-    private fun determineErrorMessage(request: HttpServletRequest, e: AuthenticationException): String? {
+    private fun determineErrorMessage(request: HttpServletRequest, e: AuthenticationException): String? = run {
         val attributes = arrayOf("expired", "unsupported", "invalid", "illegal", "notfound")
         for (attribute in attributes) {
             val message = request.getAttribute(attribute) as? String
@@ -47,6 +47,7 @@ class JwtAuthenticationEntryPoint(
                 return message
             }
         }
-        return e.message
+
+        e.message
     }
 }

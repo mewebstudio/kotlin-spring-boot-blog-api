@@ -12,16 +12,13 @@ class StringArrayConverter : AttributeConverter<List<String>, String> {
     /**
      * Convert List<String> to JSON string
      */
-    override fun convertToDatabaseColumn(attribute: List<String>?): String? {
-        return attribute?.let { objectMapper.writeValueAsString(it) }
-    }
+    override fun convertToDatabaseColumn(attribute: List<String>?): String? =
+        attribute?.let { objectMapper.writeValueAsString(it) }
 
     /**
      * Convert JSON string to List<String>
      */
-    override fun convertToEntityAttribute(dbData: String?): List<String> {
-        return dbData?.let {
-            objectMapper.readValue(it, object : TypeReference<List<String>>() {})
-        } ?: emptyList()
-    }
+    override fun convertToEntityAttribute(dbData: String?): List<String> = dbData?.let {
+        objectMapper.readValue(it, object : TypeReference<List<String>>() {})
+    } ?: emptyList()
 }

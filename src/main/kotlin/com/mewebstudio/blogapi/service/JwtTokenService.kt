@@ -23,11 +23,10 @@ class JwtTokenService(
      * @return JwtToken
      * @throws NotFoundException
      */
-    fun findByUserIdAndRefreshToken(userId: UUID, refreshToken: String): JwtToken {
-        return jwtTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken) ?: throw NotFoundException(
+    fun findByUserIdAndRefreshToken(userId: UUID, refreshToken: String): JwtToken =
+        jwtTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken) ?: throw NotFoundException(
             messageSourceService.get("not_found_with_param", arrayOf(messageSourceService.get("token")))
         )
-    }
 
     /**
      * Find a JWT token by token or refresh token.
@@ -36,11 +35,10 @@ class JwtTokenService(
      * @return JwtToken
      * @throws NotFoundException
      */
-    fun findByTokenOrRefreshToken(token: String): JwtToken {
-        return jwtTokenRepository.findByTokenOrRefreshToken(token, token) ?: throw NotFoundException(
+    fun findByTokenOrRefreshToken(token: String): JwtToken =
+        jwtTokenRepository.findByTokenOrRefreshToken(token, token) ?: throw NotFoundException(
             messageSourceService.get("not_found_with_param", arrayOf(messageSourceService.get("token")))
         )
-    }
 
     /**
      * Save a JWT token.

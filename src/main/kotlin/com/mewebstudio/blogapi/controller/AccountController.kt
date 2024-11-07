@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/account")
 @Tag(name = "002. Account", description = "Account API")
-class AccountController(private val userService: UserService): AbstractBaseController() {
+class AccountController(private val userService: UserService) : AbstractBaseController() {
     @GetMapping("/me")
     @Operation(
         summary = "Me endpoint",
@@ -48,9 +48,7 @@ class AccountController(private val userService: UserService): AbstractBaseContr
             )
         ]
     )
-    fun me(): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse.convert(userService.getUser()))
-    }
+    fun me(): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.getUser()))
 
     @PatchMapping("/update")
     @Operation(
@@ -86,7 +84,5 @@ class AccountController(private val userService: UserService): AbstractBaseContr
     fun update(
         @Parameter(description = "Request body to update profile", required = true)
         @RequestBody @Validated request: UpdateProfileRequest
-    ): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse.convert(userService.updateProfile(request)))
-    }
+    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.updateProfile(request)))
 }

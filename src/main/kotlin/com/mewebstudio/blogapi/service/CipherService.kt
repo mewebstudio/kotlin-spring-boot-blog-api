@@ -22,9 +22,9 @@ class CipherService {
      * @return String
      * @throws CipherException - Encrypting exception
      */
-    fun encrypt(plainText: String, secretKey: String): String {
+    fun encrypt(plainText: String, secretKey: String): String = run {
         try {
-            return AESCipher.encrypt(plainText, secretKey)
+            AESCipher.encrypt(plainText, secretKey)
         } catch (e: Exception) {
             log.error("Encrypting error", e)
             throw CipherException(e)
@@ -38,9 +38,7 @@ class CipherService {
      * @return String
      * @throws CipherException - Encrypting exception
      */
-    fun encrypt(plainText: String): String {
-        return encrypt(plainText, appSecret)
-    }
+    fun encrypt(plainText: String): String = encrypt(plainText, appSecret)
 
     /**
      * Decrypt cipher text with secret key.
@@ -50,9 +48,9 @@ class CipherService {
      * @return String
      * @throws CipherException - Decrypting exception
      */
-    fun decrypt(encryptedText: String, secretKey: String): String {
+    fun decrypt(encryptedText: String, secretKey: String): String = run {
         try {
-            return AESCipher.decrypt(encryptedText, secretKey)
+            AESCipher.decrypt(encryptedText, secretKey)
         } catch (e: java.lang.Exception) {
             log.error("Decrypting error", e)
             throw CipherException(e)
@@ -66,7 +64,5 @@ class CipherService {
      * @return String
      * @throws CipherException - Decrypting exception
      */
-    fun decrypt(encryptedText: String): String {
-        return decrypt(encryptedText, appSecret)
-    }
+    fun decrypt(encryptedText: String): String = decrypt(encryptedText, appSecret)
 }

@@ -130,8 +130,7 @@ complexity:
     active: true
     threshold: 60
     excludes: [
-      '**/test/**',
-      '**/entity/specification/**'
+      '**/test/**'
     ]
   LongParameterList:
     active: true

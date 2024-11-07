@@ -12,84 +12,76 @@ import java.util.*
 
 class UserFilterSpecification(private val criteria: UserCriteria) : Specification<User> {
     override fun toPredicate(root: Root<User>, query: CriteriaQuery<*>?, criteriaBuilder: CriteriaBuilder): Predicate? {
-        val predicates: MutableList<Predicate> = mutableListOf()
+        val predicates = mutableListOf<Predicate>()
 
-        if (criteria.roles.isNullOrEmpty().not()) {
-            val rolePredicates = criteria.roles!!.map { role ->
-                criteriaBuilder.isTrue(
-                    criteriaBuilder.function(
-                        "jsonb_contains", Boolean::class.java,
-                        root.get<String>("roles"),
-                        criteriaBuilder.literal("[\"$role\"]")
-                    )
-                )
-            }
-
-            if (rolePredicates.isNotEmpty()) {
-                predicates.add(criteriaBuilder.or(*rolePredicates.toTypedArray()))
-            }
+        criteria.roles?.takeIf { it.isNotEmpty() }?.let {
+            predicates.add(buildRolePredicate(root, criteriaBuilder, it))
         }
 
-        if (criteria.genders.isNullOrEmpty().not()) {
-            val genderPath = root.get<Enums.GenderEnum>("gender")
-            val genderPredicate = genderPath.`in`(criteria.genders)
-            predicates.add(genderPredicate)
+        criteria.genders?.takeIf { it.isNotEmpty() }?.let {
+            predicates.add(root.get<Enums.GenderEnum>("gender").`in`(it))
         }
 
-        if (criteria.createdAtStart != null) {
-            val createdAtStartPredicate = criteriaBuilder.greaterThanOrEqualTo(
-                root.get("createdAt"),
-                criteria.createdAtStart
-            )
-            predicates.add(createdAtStartPredicate)
+        criteria.createdAtStart?.let {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), it))
         }
 
-        if (criteria.createdAtEnd != null) {
-            val createdAtEndPredicate = criteriaBuilder.lessThanOrEqualTo(
-                root.get("createdAt"),
-                criteria.createdAtEnd
-            )
-            predicates.add(createdAtEndPredicate)
+        criteria.createdAtEnd?.let {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), it))
         }
 
-        if (criteria.updatedAtStart != null) {
-            val updatedAtStartPredicate = criteriaBuilder.greaterThanOrEqualTo(
-                root.get("updatedAt"),
-                criteria.updatedAtStart
-            )
-            predicates.add(updatedAtStartPredicate)
+        criteria.updatedAtStart?.let {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updatedAt"), it))
         }
 
-        if (criteria.updatedAtEnd != null) {
-            val updatedAtEndPredicate = criteriaBuilder.lessThanOrEqualTo(
-                root.get("updatedAt"),
-                criteria.updatedAtEnd
-            )
-            predicates.add(updatedAtEndPredicate)
+        criteria.updatedAtEnd?.let {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), it))
         }
 
-        if (criteria.isBlocked != null) {
-            val isBlockedPredicate = criteriaBuilder.equal(
-                root.get<Boolean>("blockedAt").isNotNull(),
-                criteria.isBlocked
-            )
-            predicates.add(isBlockedPredicate)
+        criteria.isBlocked?.let {
+            predicates.add(criteriaBuilder.equal(root.get<Boolean>("blockedAt").isNotNull(), it))
         }
 
-        if (criteria.q != null) {
-            val q = "%${criteria.q!!.lowercase(Locale.getDefault())}%"
-            val qPredicate = criteriaBuilder.or(
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), q),
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), q),
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), q)
-            )
-            predicates.add(qPredicate)
+        criteria.q?.let { q ->
+            val qPattern = "%${q.lowercase(Locale.getDefault())}%"
+            predicates.add(buildSearchPredicate(root, criteriaBuilder, qPattern))
         }
 
-        if (predicates.isNotEmpty()) {
-            query!!.where(*predicates.toTypedArray())
-        }
-
-        return query!!.distinct(true).restriction
+        query?.where(*predicates.toTypedArray())?.distinct(true)
+        return query?.restriction
     }
+
+    /**
+     * Build role predicate
+     */
+    private fun buildRolePredicate(
+        root: Root<User>,
+        criteriaBuilder: CriteriaBuilder,
+        roles: List<Enums.RoleEnum>
+    ): Predicate = run {
+        val rolePredicates = roles.map { role ->
+            criteriaBuilder.isTrue(
+                criteriaBuilder.function(
+                    "jsonb_contains", Boolean::class.java,
+                    root.get<String>("roles"),
+                    criteriaBuilder.literal("[\"$role\"]")
+                )
+            )
+        }
+
+        criteriaBuilder.or(*rolePredicates.toTypedArray())
+    }
+
+    /**
+     * Build search predicate.
+     */
+    private fun buildSearchPredicate(
+        root: Root<User>,
+        criteriaBuilder: CriteriaBuilder,
+        pattern: String
+    ): Predicate = criteriaBuilder.or(
+        criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), pattern),
+        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), pattern),
+        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), pattern)
+    )
 }

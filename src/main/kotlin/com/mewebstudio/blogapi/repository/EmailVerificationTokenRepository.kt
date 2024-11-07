@@ -13,6 +13,6 @@ interface EmailVerificationTokenRepository : JpaRepository<EmailVerificationToke
     fun findByToken(token: String): EmailVerificationToken?
 
     @Modifying
-    @Query("DELETE FROM EmailVerificationToken rt WHERE rt.user.id = :userId")
+    @Query("DELETE FROM EmailVerificationToken evt WHERE evt.user.id = :userId")
     fun deleteByUserId(@Param("userId") userId: UUID)
 }

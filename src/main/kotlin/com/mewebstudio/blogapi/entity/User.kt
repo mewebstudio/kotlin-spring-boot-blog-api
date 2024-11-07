@@ -62,10 +62,10 @@ data class User(
     @OrderBy("createdAt ASC")
     var comments: List<Comment> = arrayListOf(),
 
-    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var emailVerificationToken: EmailVerificationToken? = null,
 
-    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var passwordResetToken: PasswordResetToken? = null,
 
     @Column(name = "blocked_at")

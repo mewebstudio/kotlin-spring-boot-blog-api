@@ -17,9 +17,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const response = JSON.parse(responseBody);",
-									"pm.collectionVariables.set(\"token\", response.token);",
-									"pm.collectionVariables.set(\"refresh_token\", response.refreshToken);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const response = pm.response.json()",
+									"    pm.collectionVariables.set(\"token\", response.token)",
+									"    pm.collectionVariables.set(\"refreshToken\", response.refreshToken)",
+									"})",
 									""
 								],
 								"type": "text/javascript",
@@ -32,7 +36,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mail@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"Secret1.\",\n    \"rememberMe\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -53,14 +57,65 @@
 					"response": []
 				},
 				{
+					"name": "Refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const response = pm.response.json()",
+									"    pm.collectionVariables.set(\"token\", response.token)",
+									"    pm.collectionVariables.set(\"refreshToken\", response.refreshToken)",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{refreshToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/auth/refresh",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Logout",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"token\", null);",
-									"pm.collectionVariables.set(\"refresh_token\", null);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    pm.collectionVariables.unset(\"token\")",
+									"    pm.collectionVariables.unset(\"refreshToken\")",
+									"})",
 									""
 								],
 								"type": "text/javascript",
@@ -459,19 +514,7 @@
 			"value": ""
 		},
 		{
-			"key": "refresh_token",
-			"value": ""
-		},
-		{
-			"key": "user-id",
-			"value": ""
-		},
-		{
-			"key": "user-id2",
-			"value": ""
-		},
-		{
-			"key": "user-id3",
+			"key": "refreshToken",
 			"value": ""
 		}
 	]

@@ -53,6 +53,22 @@ data class UserFilterRequest(
     )
     val createdAtEnd: LocalDateTime? = null,
 
+    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @field:Parameter(
+        name = "updatedAtStart",
+        description = "Created date start",
+        example = "2024-10-25T22:54:58"
+    )
+    val updatedAtStart: LocalDateTime? = null,
+
+    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @field:Parameter(
+        name = "updatedAtEnd",
+        description = "Created date end",
+        example = "2024-10-25T22:54:58"
+    )
+    val updatedAtEnd: LocalDateTime? = null,
+
     @field:Parameter(
         name = "isBlocked",
         description = "Is blocked?",

@@ -52,6 +52,22 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
             predicates.add(createdAtEndPredicate)
         }
 
+        if (criteria.updatedAtStart != null) {
+            val updatedAtStartPredicate = criteriaBuilder.greaterThanOrEqualTo(
+                root.get("updatedAt"),
+                criteria.updatedAtStart
+            )
+            predicates.add(updatedAtStartPredicate)
+        }
+
+        if (criteria.updatedAtEnd != null) {
+            val updatedAtEndPredicate = criteriaBuilder.lessThanOrEqualTo(
+                root.get("updatedAt"),
+                criteria.updatedAtEnd
+            )
+            predicates.add(updatedAtEndPredicate)
+        }
+
         if (criteria.isBlocked != null) {
             val isBlockedPredicate = criteriaBuilder.equal(
                 root.get<Boolean>("blockedAt").isNotNull(),

@@ -129,6 +129,10 @@ complexity:
   LongMethod:
     active: true
     threshold: 60
+    excludes: [
+      '**/test/**',
+      '**/entity/specification/**'
+    ]
   LongParameterList:
     active: true
     functionThreshold: 6

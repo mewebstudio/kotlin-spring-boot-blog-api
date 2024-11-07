@@ -8,6 +8,8 @@ data class UserCriteria(
     var genders: List<Enums.GenderEnum>? = null,
     var createdAtStart: LocalDateTime? = null,
     var createdAtEnd: LocalDateTime? = null,
+    var updatedAtStart: LocalDateTime? = null,
+    var updatedAtEnd: LocalDateTime? = null,
     var isBlocked: Boolean? = null,
     var q: String? = null
 )

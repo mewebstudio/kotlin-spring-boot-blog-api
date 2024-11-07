@@ -268,6 +268,16 @@
 											"disabled": true
 										},
 										{
+											"key": "updatedAtStart",
+											"value": "2023-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "updatedAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
 											"key": "isBlocked",
 											"value": "false",
 											"disabled": true

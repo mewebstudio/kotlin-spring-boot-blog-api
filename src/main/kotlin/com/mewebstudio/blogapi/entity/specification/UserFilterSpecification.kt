@@ -58,19 +58,15 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
         root: Root<User>,
         criteriaBuilder: CriteriaBuilder,
         roles: List<Enums.RoleEnum>
-    ): Predicate = run {
-        val rolePredicates = roles.map { role ->
-            criteriaBuilder.isTrue(
-                criteriaBuilder.function(
-                    "jsonb_contains", Boolean::class.java,
-                    root.get<String>("roles"),
-                    criteriaBuilder.literal("[\"$role\"]")
-                )
+    ): Predicate = criteriaBuilder.or(*roles.map {
+        criteriaBuilder.isTrue(
+            criteriaBuilder.function(
+                "jsonb_contains", Boolean::class.java,
+                root.get<String>("roles"),
+                criteriaBuilder.literal("[\"$it\"]")
             )
-        }
-
-        criteriaBuilder.or(*rolePredicates.toTypedArray())
-    }
+        )
+    }.toTypedArray())
 
     /**
      * Build search predicate.

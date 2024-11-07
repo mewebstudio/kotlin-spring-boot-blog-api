@@ -87,4 +87,4 @@ data class UpdateUserRequest(
         example = "false"
     )
     var isBlocked: Boolean? = false
-) : IUpdateUserRequest
+) : IUserRequest

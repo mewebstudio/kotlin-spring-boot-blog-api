@@ -9,6 +9,7 @@ spring:
     description: ${APP_DESCRIPTION:Blog API}
     version: ${APP_VERSION:1.0.0}
     url: ${APP_URL:http://localhost:${server.port}}
+    frontend-url: ${APP_FRONTEND_URL:http://localhost:3000}
     secret: ${APP_SECRET:sTvHbWsBDSCwW5ZnxpPEx7B5ad2Zx60p}
     default-locale: ${APP_DEFAULT_LOCALE:en}
     default-timezone: ${APP_DEFAULT_TIMEZONE:Europe/Istanbul}
@@ -19,9 +20,12 @@ spring:
         expires-in: ${APP_JWT_REFRESH_TOKEN_EXPIRES_IN:1209600000} # 30 days in milliseconds
       remember-me:
         expires-in: ${APP_JWT_REMEMBER_ME_EXPIRES_IN:2592000000} # 14 days in milliseconds
+    registration:
+      token:
+        expires-in: ${APP_REGISTRATION_EMAIL_TOKEN_EXPIRES_IN:#{60 * 60 * 1000}} # 60 minutes in milliseconds
     password:
       token:
-        expires-in: ${APP_REGISTRATION_PASSWORD_TOKEN_EXPIRES_IN:3600000} # 60 minutes in milliseconds
+        expires-in: ${APP_PASSWORD_TOKEN_EXPIRES_IN:3600000} # 60 minutes in milliseconds
   profiles:
     active: ${APP_PROFILES_ACTIVE:dev}
   devtools:
@@ -74,7 +78,7 @@ spring:
     port: ${MAIL_PORT:1025}
     username: ${MAIL_USERNAME:test@email.com}
     password: ${MAIL_PASSWORD:}
-    sender: ${MAIL_SENDER:Partner Manager}
+    sender: ${MAIL_SENDER:Blog API}
     properties:
       mail:
         transport:

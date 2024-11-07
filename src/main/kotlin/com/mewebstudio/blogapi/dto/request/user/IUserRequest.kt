@@ -1,6 +1,6 @@
 package com.mewebstudio.blogapi.dto.request.user
 
-interface IUpdateUserRequest {
+interface IUserRequest {
     val firstname: String?
     val lastname: String?
     val gender: String?

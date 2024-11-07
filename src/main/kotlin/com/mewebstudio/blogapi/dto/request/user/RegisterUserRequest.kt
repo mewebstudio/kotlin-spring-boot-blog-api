@@ -1,6 +1,5 @@
 package com.mewebstudio.blogapi.dto.request.user
 
-import com.mewebstudio.blogapi.dto.annotation.MinListSize
 import com.mewebstudio.blogapi.dto.annotation.Password
 import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
 import com.mewebstudio.blogapi.util.Enums
@@ -8,10 +7,9 @@ import com.mewebstudio.blogapi.dto.annotation.FieldMatch
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
 
 @FieldMatch(first = "password", second = "passwordConfirm", message = "{password_mismatch}")
-data class CreateUserRequest(
+data class RegisterUserRequest(
     @field:NotBlank(message = "{not_blank}")
     @Schema(
         name = "firstname",
@@ -75,36 +73,5 @@ data class CreateUserRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
         example = "P@sswd123."
     )
-    override var passwordConfirm: String? = null,
-
-    @field:NotEmpty(message = "{not_blank}")
-    @field:MinListSize(min = 1, message = "{min_list_size}")
-    @field:ValueOfEnum(enumClass = Enums.RoleEnum::class)
-    @Schema(
-        name = "roles",
-        description = "Roles of the user",
-        type = "List<String>",
-        requiredMode = Schema.RequiredMode.REQUIRED,
-        allowableValues = ["admin", "user"],
-        example = "[\"user\"]"
-    )
-    var roles: List<String>? = null,
-
-    @Schema(
-        name = "isBlocked",
-        description = "Block user",
-        type = "Boolean",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
-        example = "false"
-    )
-    var isBlocked: Boolean? = false,
-
-    @Schema(
-        name = "isEmailVerified",
-        description = "E-mail verification status",
-        type = "Boolean",
-        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
-        example = "false"
-    )
-    var isEmailVerified: Boolean? = false
+    override var passwordConfirm: String? = null
 ) : IUserRequest

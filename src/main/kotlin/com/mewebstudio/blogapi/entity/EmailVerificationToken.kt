@@ -1,8 +1,10 @@
 package com.mewebstudio.blogapi.entity
 
+import com.mewebstudio.blogapi.entity.listener.EmailVerificationListener
 import com.mewebstudio.blogapi.util.Constants.EMAIL_VERIFICATION_TOKEN_LENGTH
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
 import jakarta.persistence.FetchType
 import jakarta.persistence.ForeignKey
 import jakarta.persistence.JoinColumn
@@ -23,6 +25,7 @@ import java.util.*
         UniqueConstraint(columnNames = ["token"], name = "uk_email_verification_tokens_token")
     ]
 )
+@EntityListeners(EmailVerificationListener::class)
 data class EmailVerificationToken(
     @OneToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -33,7 +36,8 @@ data class EmailVerificationToken(
         nullable = false,
         unique = true
     )
-    private var user: User? = null,
+    var user: User? = null,
+
     @Column(name = "token", nullable = false, length = EMAIL_VERIFICATION_TOKEN_LENGTH)
     var token: String? = null,
 

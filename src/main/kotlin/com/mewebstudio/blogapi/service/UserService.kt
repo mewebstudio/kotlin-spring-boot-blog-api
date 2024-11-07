@@ -1,7 +1,8 @@
 package com.mewebstudio.blogapi.service
 
 import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
-import com.mewebstudio.blogapi.dto.request.user.IUpdateUserRequest
+import com.mewebstudio.blogapi.dto.request.user.IUserRequest
+import com.mewebstudio.blogapi.dto.request.user.RegisterUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateProfileRequest
 import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.UserFilterRequest
@@ -15,6 +16,7 @@ import com.mewebstudio.blogapi.util.Enums
 import com.mewebstudio.blogapi.util.Helpers
 import com.mewebstudio.blogapi.util.PageRequestBuilder
 import com.mewebstudio.blogapi.util.logger
+import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.data.domain.Page
 import org.springframework.security.authentication.BadCredentialsException
@@ -34,6 +36,7 @@ import java.util.*
 class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val emailVerificationTokenService: EmailVerificationTokenService,
     private val messageSourceService: MessageSourceService
 ) {
     private val log: Logger by logger()
@@ -182,45 +185,71 @@ class UserService(
     }
 
     /**
+     * Register a new user.
+     *
+     * @param request RegisterUserRequest
+     * @return User
+     */
+    @Transactional
+    @Throws(BindException::class)
+    fun register(request: RegisterUserRequest): User = run {
+        val user = createEqualFields(request)
+        user.roles = listOf(Enums.RoleEnum.USER.name)
+
+        userRepository.save(user)
+        log.info("[Register user] User registered: ${user.email} - ${user.id}")
+
+        create(user)
+    }
+
+    /**
      * Create a new user.
      *
      * @param request CreateUserRequest
      * @return User
      */
+    @Transactional
     @Throws(BindException::class)
-    fun create(request: CreateUserRequest): User {
-        val bindingResult = BeanPropertyBindingResult(request, "request")
-        userRepository.findByEmail(request.email!!.lowercase())?.let {
-            log.error("[Create user] User with email: ${request.email} already exists")
-            bindingResult.addError(
-                FieldError(
-                    bindingResult.objectName, "email",
-                    messageSourceService.get(
-                        "already_exists_with_param",
-                        arrayOf(messageSourceService.get("email"))
-                    )
-                )
-            )
-        }
+    fun create(request: CreateUserRequest): User = run {
+        val user = createEqualFields(request)
 
-        if (bindingResult.hasErrors()) {
-            throw BindException(bindingResult)
-        }
+        user.roles = request.roles!!.map { it.uppercase() }
+        user.blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
+        user.emailVerifiedAt = request.isEmailVerified?.let { if (it) LocalDateTime.now() else null }
 
-        val user = User().apply {
-            firstname = request.firstname!!
-            lastname = request.lastname!!
-            gender = Helpers.searchEnum(Enums.GenderEnum::class.java, request.gender)!!
-            email = request.email!!.lowercase()
-            password = passwordEncoder.encode(request.password!!)
-            roles = request.roles!!.map { it.uppercase() }
-            blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
-        }
+        create(user)
+    }
 
+    /**
+     * Create user.
+     *
+     * @param user User
+     * @return User
+     */
+    @Transactional
+    fun create(user: User): User = run {
         userRepository.save(user)
         log.info("[Create user] User created: ${user.email} - ${user.id}")
 
-        return user
+        if (user.emailVerifiedAt == null) {
+            emailVerificationTokenService.create(user)
+        }
+
+        user
+    }
+
+    /**
+     * Verify email.
+     *
+     * @param token String
+     */
+    @Transactional
+    fun verifyEmail(token: String) {
+        val user = emailVerificationTokenService.getUserByToken(token)
+        user!!.emailVerifiedAt = LocalDateTime.now()
+        userRepository.save(user)
+        emailVerificationTokenService.deleteByUserId(user.id!!)
+        log.info("Email verified: ${user.email} - ${user.id}")
     }
 
     /**
@@ -284,12 +313,48 @@ class UserService(
     }
 
     /**
+     * Create equal fields.
+     *
+     * @param request IUserRequest
+     * @return User
+     */
+    private fun createEqualFields(request: IUserRequest): User = run {
+        val bindingResult = BeanPropertyBindingResult(request, "request")
+        userRepository.findByEmail(request.email!!.lowercase())?.let {
+            log.error("[Create user] User with email: ${request.email} already exists")
+            bindingResult.addError(
+                FieldError(
+                    bindingResult.objectName, "email",
+                    messageSourceService.get(
+                        "already_exists_with_param",
+                        arrayOf(messageSourceService.get("email"))
+                    )
+                )
+            )
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw BindException(bindingResult)
+        }
+
+        val user = User().apply {
+            firstname = request.firstname!!
+            lastname = request.lastname!!
+            gender = request.gender.let { Helpers.searchEnum(Enums.GenderEnum::class.java, request.gender!!)!! }
+            email = request.email!!.lowercase()
+            password = passwordEncoder.encode(request.password!!)
+        }
+
+        user
+    }
+
+    /**
      * Update equal fields.
      *
-     * @param request IUpdateUserRequest
+     * @param request IUserRequest
      * @param user User
      */
-    private fun updateEqualFields(request: IUpdateUserRequest, user: User) {
+    private fun updateEqualFields(request: IUserRequest, user: User) {
         val bindingResult = BeanPropertyBindingResult(request, "request")
         if (request.email.isNullOrEmpty().not() && request.email.equals(user.email, ignoreCase = true).not()) {
             userRepository.findByEmailAndIdNot(request.email!!.lowercase(), user.id!!)?.let {

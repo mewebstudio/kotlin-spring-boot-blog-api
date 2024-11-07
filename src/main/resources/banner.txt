@@ -1,0 +1,8 @@
+  ____  _                  _    ____ ___
+ | __ )| | ___   __ _     / \  |  _ \_ _|
+ |  _ \| |/ _ \ / _` |   / _ \ | |_) | |
+ | |_) | | (_) | (_| |  / ___ \|  __/| |
+ |____/|_|\___/ \__, | /_/   \_\_|  |___|
+                |___/
+${AnsiColor.BRIGHT_MAGENTA}${spring.application.name} ${AnsiColor.RED}${spring.application.version}
+${AnsiColor.WHITE}Powered by ${AnsiColor.GREEN}Spring Boot ${spring-boot.version}

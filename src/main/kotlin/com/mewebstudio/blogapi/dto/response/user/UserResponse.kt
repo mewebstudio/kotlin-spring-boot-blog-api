@@ -80,6 +80,14 @@ data class UserResponse(
     val blockedAt: LocalDateTime?,
 
     @Schema(
+        name = "emailVerifiedAt",
+        description = "E-mail verified at",
+        type = "LocalDateTime",
+        requiredMode = RequiredMode.NOT_REQUIRED
+    )
+    val emailVerifiedAt: LocalDateTime?,
+
+    @Schema(
         name = "createdAt",
         description = "Created at",
         type = "LocalDateTime",
@@ -105,6 +113,7 @@ data class UserResponse(
             email = user.email,
             roles = user.roles.stream().map { it.lowercase() }.toArray { size -> arrayOfNulls(size) },
             blockedAt = user.blockedAt,
+            emailVerifiedAt = user.emailVerifiedAt,
             createdAt = user.createdAt,
             updatedAt = user.updatedAt
         )

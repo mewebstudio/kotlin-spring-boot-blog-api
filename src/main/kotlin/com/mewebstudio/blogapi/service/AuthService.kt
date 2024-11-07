@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.service
 
 import com.mewebstudio.blogapi.dto.request.auth.LoginRequest
+import com.mewebstudio.blogapi.dto.request.user.RegisterUserRequest
 import com.mewebstudio.blogapi.dto.response.auth.TokenExpiresInResponse
 import com.mewebstudio.blogapi.dto.response.auth.TokenResponse
 import com.mewebstudio.blogapi.entity.JwtToken
@@ -33,6 +34,18 @@ class AuthService(
     private val httpServletRequest: HttpServletRequest
 ) {
     private val log: Logger by logger()
+
+    /**
+     * Register user.
+     * @param request RegisterUserRequest
+     */
+    fun register(request: RegisterUserRequest) = userService.register(request)
+
+    /**
+     * Verify email.
+     * @param token String
+     */
+    fun verifyEmail(token: String) = userService.verifyEmail(token)
 
     /**
      * Login user.

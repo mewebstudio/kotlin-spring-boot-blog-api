@@ -65,4 +65,4 @@ data class UpdateProfileRequest(
         example = "P@sswd123."
     )
     override var passwordConfirm: String? = null
-): IUpdateUserRequest
+): IUserRequest

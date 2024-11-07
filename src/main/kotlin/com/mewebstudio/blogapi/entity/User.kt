@@ -69,7 +69,10 @@ data class User(
     var passwordResetToken: PasswordResetToken? = null,
 
     @Column(name = "blocked_at")
-    var blockedAt: LocalDateTime? = null
+    var blockedAt: LocalDateTime? = null,
+
+    @Column(name = "email_verified_at")
+    var emailVerifiedAt: LocalDateTime? = null
 ) : AbstractBaseEntity() {
     constructor() : this("", "", "", "", Enums.GenderEnum.UNKNOWN)
 

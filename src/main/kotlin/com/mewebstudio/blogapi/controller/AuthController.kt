@@ -148,28 +148,31 @@ class AuthController(
     @GetMapping("/refresh")
     @Operation(
         summary = "Refresh endpoint",
-        responses = [ApiResponse(
-            responseCode = "200",
-            description = "Successful operation",
-            content = [Content(
-                mediaType = "application/json",
-                schema = Schema(implementation = TokenResponse::class)
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successful operation",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = TokenResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Bad request",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Bad credentials",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
             )]
-        ), ApiResponse(
-            responseCode = "400",
-            description = "Bad request",
-            content = [Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = Schema(implementation = ErrorResponse::class)
-            )]
-        ), ApiResponse(
-            responseCode = "401",
-            description = "Bad credentials",
-            content = [Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = Schema(implementation = ErrorResponse::class)
-            )]
-        )]
     )
     fun refresh(
         @Parameter(description = "Refresh token", required = true)

@@ -32,18 +32,20 @@ import java.time.LocalDateTime
         Index(columnList = "gender", name = "idx_users_gender")
     ]
 )
-data class User(
+class User(
     @Column(name = "email", nullable = false)
-    var email: String,
+    var email: String? = null,
 
     @Column(name = "password", nullable = false)
-    var password: String,
+    var password: String? = null,
 
     @Column(name = "firstname", nullable = false, length = 50)
-    var firstname: String,
+    var firstname: String? = null,
 
     @Column(name = "lastname", nullable = false, length = 50)
-    var lastname: String,
+    var lastname: String? = null,
+
+    var fullName: String = "$firstname $lastname",
 
     @Column(name = "gender", nullable = false, length = 16)
     @Enumerated(EnumType.STRING)
@@ -74,18 +76,5 @@ data class User(
     @Column(name = "email_verified_at")
     var emailVerifiedAt: LocalDateTime? = null
 ) : AbstractBaseEntity() {
-    constructor() : this("", "", "", "", Enums.GenderEnum.UNKNOWN)
-
-    val fullName: String get() = "$firstname $lastname"
-
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is User) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
     override fun toString(): String = this::class.simpleName + "(id = $id)"
 }

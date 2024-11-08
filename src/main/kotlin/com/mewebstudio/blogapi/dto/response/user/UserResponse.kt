@@ -14,7 +14,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "91b2999d-d327-4dc8-9956-2fadc0dc8778"
     )
-    val id: String,
+    val id: String? = null,
 
     @Schema(
         name = "firstname",
@@ -23,7 +23,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "John"
     )
-    val firstname: String,
+    val firstname: String? = null,
 
     @Schema(
         name = "lastname",
@@ -32,7 +32,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "Doe"
     )
-    val lastname: String,
+    val lastname: String? = null,
 
     @Schema(
         name = "gender",
@@ -42,7 +42,7 @@ data class UserResponse(
         allowableValues = ["male", "female", "other"],
         example = "male"
     )
-    val gender: String,
+    val gender: String? = null,
 
     @Schema(
         name = "fullName",
@@ -51,7 +51,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "John Doe"
     )
-    val fullName: String,
+    val fullName: String? = null,
 
     @Schema(
         name = "email",
@@ -60,7 +60,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "john@example.com"
     )
-    val email: String,
+    val email: String? = null,
 
     @Schema(
         name = "roles",

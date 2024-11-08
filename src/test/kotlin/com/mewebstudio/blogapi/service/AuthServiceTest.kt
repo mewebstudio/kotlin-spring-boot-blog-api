@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.function.Executable
 import org.mockito.ArgumentMatchers.any
@@ -96,7 +95,7 @@ class AuthServiceTest {
 
         val authoritiesList = mutableListOf<GrantedAuthority>()
         authoritiesList.add(SimpleGrantedAuthority(Enums.RoleEnum.ADMIN.name))
-        jwtUserDetails = JwtUserDetails(user.id.toString(), user.email, user.password, authoritiesList)
+        jwtUserDetails = JwtUserDetails(user.id.toString(), user.email!!, user.password!!, authoritiesList)
 
         SecurityContextHolder.setContext(securityContext)
         lenient().`when`(securityContext!!.authentication).thenReturn(authentication)

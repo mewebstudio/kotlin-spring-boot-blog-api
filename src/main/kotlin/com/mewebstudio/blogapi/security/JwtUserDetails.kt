@@ -25,7 +25,7 @@ class JwtUserDetails(
                 .map { role -> SimpleGrantedAuthority(role) }
                 .collect(Collectors.toList())
 
-            JwtUserDetails(user.id.toString(), user.email, user.password, authorities)
+            JwtUserDetails(user.id.toString(), user.email!!, user.password!!, authorities)
         }
     }
 

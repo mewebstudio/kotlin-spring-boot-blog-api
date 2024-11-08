@@ -23,7 +23,7 @@ import java.util.*
         UniqueConstraint(columnNames = ["token"], name = "uk_password_reset_tokens_token")
     ]
 )
-data class PasswordResetToken(
+class PasswordResetToken(
     @OneToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
@@ -42,14 +42,5 @@ data class PasswordResetToken(
     @Temporal(TemporalType.TIMESTAMP)
     val expirationDate: Date? = null
 ) : AbstractBaseEntity() {
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is Post) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
-    override fun toString(): String = this::class.simpleName + "(id = $id, title = ${user?.id})"
+    override fun toString(): String = this::class.simpleName + "(id = $id, user = ${user})"
 }

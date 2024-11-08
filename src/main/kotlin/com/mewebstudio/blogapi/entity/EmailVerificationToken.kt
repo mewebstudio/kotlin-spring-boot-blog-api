@@ -26,7 +26,7 @@ import java.util.*
     ]
 )
 @EntityListeners(EmailVerificationListener::class)
-data class EmailVerificationToken(
+class EmailVerificationToken(
     @OneToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
@@ -45,14 +45,5 @@ data class EmailVerificationToken(
     @Temporal(TemporalType.TIMESTAMP)
     val expirationDate: Date? = null
 ) : AbstractBaseEntity() {
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is Post) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
-    override fun toString(): String = this::class.simpleName + "(id = $id, title = ${user?.id})"
+    override fun toString(): String = this::class.simpleName + "(id = $id, user = ${user})"
 }

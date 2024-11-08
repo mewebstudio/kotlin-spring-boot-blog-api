@@ -111,7 +111,7 @@ class UserServiceTest {
             val result = userService.create(request)
             // Then
             assertNotNull(result)
-            assertEquals(user.email.lowercase(), result.email.lowercase())
+            assertEquals(user.email?.lowercase(), result.email?.lowercase())
             assertEquals("encodedPassword", result.password)
             verify(userRepository).save(any(User::class.java))
         }

@@ -23,12 +23,12 @@ import jakarta.persistence.UniqueConstraint
         Index(columnList = "slug", name = "idx_categories_slug")
     ]
 )
-data class Category(
+class Category(
     @Column(name = "title", nullable = false)
-    var title: String,
+    var title: String? = null,
 
     @Column(name = "slug", nullable = false)
-    var slug: String,
+    var slug: String? = null,
 
     @Column(name = "description")
     var description: String? = null,
@@ -59,16 +59,5 @@ data class Category(
     )
     var posts: List<Post> = arrayListOf(),
 ) : AbstractBaseEntity() {
-    constructor() : this(title = "", slug = "")
-
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is Post) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
     override fun toString(): String = this::class.simpleName + "(id = $id, title = $title)"
 }

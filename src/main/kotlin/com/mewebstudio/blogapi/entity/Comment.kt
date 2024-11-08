@@ -19,7 +19,7 @@ import java.time.LocalDateTime
         Index(columnList = "content", name = "idx_comments_content")
     ]
 )
-data class Comment(
+class Comment(
     @ManyToOne(optional = false)
     @JoinColumn(
         name = "post_id",
@@ -40,28 +40,11 @@ data class Comment(
     @OnDelete(action = OnDeleteAction.CASCADE)
     var user: User? = null,
 
-    @Column(name = "title", nullable = false)
-    var title: String,
-
-    @Column(name = "slug", nullable = false)
-    var slug: String,
-
     @Column(name = "content", nullable = false)
     var content: String? = null,
 
     @Column(name = "published_at")
     var publishedAt: LocalDateTime? = null,
 ) : AbstractBaseEntity() {
-    constructor() : this(title = "", slug = "")
-
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is Post) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
-    override fun toString(): String = this::class.simpleName + "(id = $id, title = $title)"
+    override fun toString(): String = this::class.simpleName + "(id = $id, post = ${post})"
 }

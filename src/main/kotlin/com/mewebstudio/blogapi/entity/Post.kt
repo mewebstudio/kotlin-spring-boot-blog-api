@@ -29,7 +29,7 @@ import java.time.LocalDateTime
         Index(columnList = "content", name = "idx_posts_content")
     ]
 )
-data class Post(
+class Post(
     @ManyToOne(optional = false)
     @JoinColumn(
         name = "user_id",
@@ -41,13 +41,13 @@ data class Post(
     var user: User? = null,
 
     @Column(name = "title", nullable = false)
-    var title: String,
+    var title: String? = null,
 
     @Column(name = "slug", nullable = false)
-    var slug: String,
+    var slug: String? = null,
 
     @Column(name = "content", nullable = false)
-    var content: String,
+    var content: String? = null,
 
     @Column(name = "published_at")
     var publishedAt: LocalDateTime? = null,
@@ -104,16 +104,5 @@ data class Post(
     )
     var tags: List<Tag> = arrayListOf(),
 ) : AbstractBaseEntity() {
-    constructor() : this(title = "", slug = "", content = "")
-
-    override fun equals(other: Any?): Boolean = run {
-        if (this === other) return true
-        if (other !is Post) return false
-
-        id == other.id
-    }
-
-    override fun hashCode(): Int = id.hashCode()
-
-    override fun toString(): String = this::class.simpleName + "(id = $id, title = $title)"
+    override fun toString(): String = this::class.simpleName + "(id = $id, user = $user)"
 }

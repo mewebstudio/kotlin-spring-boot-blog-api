@@ -32,6 +32,41 @@ secure token storage.
 - **Redis**: Used for storing JWT tokens securely and efficiently.
 - **Docker & Docker Compose**: To run the application and its dependencies as containers.
 
+## Roadmap
+
+- [X] **Authentication**
+    - Implement JWT-based authentication.
+    - Add role-based authorization for users (e.g., admin, user).
+
+- [X] **Registration & Login**
+    - Create endpoints for user registration and login.
+    - Implement password hashing and salting for secure storage.
+
+- [ ] **User Management**
+    - Create endpoints for user registration and profile management.
+    - Add user roles and permissions.
+
+- [ ] **Category Management**
+    - Implement CRUD operations for categories.
+    - Allow categorization of posts.
+
+- [ ] **Tag Management**
+    - Implement CRUD operations for tags.
+    - Enable tagging posts with multiple tags.
+
+- [ ] **Post Management**
+    - Create, update, delete, and view posts.
+    - Add support for rich text formatting in posts.
+    - Integrate posts with categories and tags.
+
+- [ ] **Comment Management**
+    - Implement CRUD operations for comments on posts.
+    - Add moderation features for comments (e.g., approve, delete).
+
+- [ ] **Project Settings Management**
+    - Create endpoints to manage application settings (e.g., site title, SEO settings).
+    - Add support for configurable project settings through the API.
+
 ### Swagger Documentation
 
 Once the application is running, you can access the Swagger UI for API documentation at:
@@ -74,4 +109,5 @@ mvn clean package
 ```
 
 ### License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

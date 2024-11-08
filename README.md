@@ -32,7 +32,7 @@ secure token storage.
 - **Redis**: Used for storing JWT tokens securely and efficiently.
 - **Docker & Docker Compose**: To run the application and its dependencies as containers.
 
-## Roadmap
+### Roadmap
 
 - [X] **Authentication**
     - Implement JWT-based authentication.

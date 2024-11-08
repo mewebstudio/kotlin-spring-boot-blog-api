@@ -67,7 +67,7 @@ secure token storage.
     - Implement CRUD operations for comments on posts.
     - Add moderation features for comments (e.g., approve, delete).
 
-- [ ] **Project Settings Management**
+- [ ] **Application Settings Management**
     - Create endpoints to manage application settings (e.g., site title, SEO settings).
     - Add support for configurable project settings through the API.
 

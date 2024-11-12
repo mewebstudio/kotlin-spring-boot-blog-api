@@ -15,7 +15,6 @@ import java.time.LocalDateTime
 @Table(
     name = "comments",
     indexes = [
-        Index(columnList = "title", name = "idx_comments_title"),
         Index(columnList = "content", name = "idx_comments_content")
     ]
 )

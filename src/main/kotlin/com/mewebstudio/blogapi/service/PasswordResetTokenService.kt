@@ -1,11 +1,11 @@
 package com.mewebstudio.blogapi.service
 
-import com.mewebstudio.blogapi.entity.EmailVerificationToken
+import com.mewebstudio.blogapi.entity.PasswordResetToken
 import com.mewebstudio.blogapi.entity.User
 import com.mewebstudio.blogapi.exception.NotFoundException
 import com.mewebstudio.blogapi.exception.TokenExpiredException
-import com.mewebstudio.blogapi.repository.EmailVerificationTokenRepository
-import com.mewebstudio.blogapi.util.Constants.EMAIL_VERIFICATION_TOKEN_LENGTH
+import com.mewebstudio.blogapi.repository.PasswordResetTokenRepository
+import com.mewebstudio.blogapi.util.Constants.PASSWORD_RESET_TOKEN_LENGTH
 import com.mewebstudio.blogapi.util.RandomStringGenerator
 import com.mewebstudio.blogapi.util.logger
 import org.slf4j.Logger
@@ -14,43 +14,43 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class EmailVerificationTokenService(
-    private val emailVerificationTokenRepository: EmailVerificationTokenRepository,
+class PasswordResetTokenService(
+    private val passwordResetTokenRepository: PasswordResetTokenRepository,
     private val messageSourceService: MessageSourceService
 ) {
     private val log: Logger by logger()
 
-    @Value("\${spring.application.registration.token.expires-in}")
+    @Value("\${spring.application.password.token.expires-in}")
     private lateinit var tokenExpiresIn: String
 
     /**
-     * Create email verification token.
+     * Create password reset token.
      *
      * @param user User
-     * @return EmailVerificationToken
+     * @return PasswordResetToken
      */
-    fun create(user: User): EmailVerificationToken = EmailVerificationToken(
+    fun create(user: User): PasswordResetToken = PasswordResetToken(
         user = user,
-        token = RandomStringGenerator(EMAIL_VERIFICATION_TOKEN_LENGTH).next(),
+        token = RandomStringGenerator(PASSWORD_RESET_TOKEN_LENGTH).next(),
         expirationDate = Date(System.currentTimeMillis() + tokenExpiresIn.toLong())
     )
 
     /**
-     * Find email verification token by token.
+     * Find user by password reset token.
      *
      * @param token String
      * @return User
      */
     fun getUserByToken(token: String): User {
-        emailVerificationTokenRepository.findByToken(token)?.let {
-            return if (isEmailVerificationTokenExpired(it)) {
-                log.info("[EmailVerificationService] Email verification token expired.")
+        passwordResetTokenRepository.findByToken(token)?.let {
+            return if (isPasswordTokenExpired(it)) {
+                log.info("[PasswordResetTokenService] Password token expired.")
                 throw TokenExpiredException(messageSourceService.get("token_expired"))
             } else {
                 it.user!!
             }
         } ?: run {
-            log.error("[EmailVerificationService] Token not found: $token")
+            log.error("[PasswordResetTokenService] Token not found: $token")
             throw NotFoundException(
                 messageSourceService.get(
                     "not_found_with_param",
@@ -61,11 +61,11 @@ class EmailVerificationTokenService(
     }
 
     /**
-     * Is e-mail verification token expired?
+     * Is password token expired?
      *
-     * @param token EmailVerificationToken
+     * @param token PasswordResetToken
      * @return boolean
      */
-    private fun isEmailVerificationTokenExpired(token: EmailVerificationToken): Boolean =
+    private fun isPasswordTokenExpired(token: PasswordResetToken): Boolean =
         token.expirationDate?.before(Date()) ?: false
 }

@@ -42,7 +42,7 @@ secure token storage.
     - Create endpoints for user registration and login.
     - Implement password hashing and salting for secure storage.
 
-- [ ] **Password Reset**
+- [X] **Password Reset**
     - Create endpoints for password reset.
     - Add email notifications for password reset requests.
 

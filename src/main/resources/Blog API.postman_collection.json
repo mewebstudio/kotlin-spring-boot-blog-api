@@ -79,14 +79,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/auth/email-verification/",
+							"raw": "{{base}}/auth/email-verification/ghlab8ERdwzP3FqEqyuxTBlUNqBxh2pBa7aFnaexlTcuObNRq1TTMtNF7etOkvrL",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"auth",
 								"email-verification",
-								""
+								"ghlab8ERdwzP3FqEqyuxTBlUNqBxh2pBa7aFnaexlTcuObNRq1TTMtNF7etOkvrL"
 							]
 						}
 					},
@@ -133,6 +133,85 @@
 							"path": [
 								"auth",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/auth/password",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"P@sswd123.\",\n  \"passwordConfirm\": \"P@sswd123.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/auth/password/XajBvDnSyfXKjzgrflJA6CQF5IVGxykE2Sp5Y8CIt5QU1hE5dhcWLcCblEyziFUc",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"auth",
+								"password",
+								"XajBvDnSyfXKjzgrflJA6CQF5IVGxykE2Sp5Y8CIt5QU1hE5dhcWLcCblEyziFUc"
 							]
 						}
 					},
@@ -608,14 +687,6 @@
 		},
 		{
 			"key": "refreshToken",
-			"value": ""
-		},
-		{
-			"key": "userId",
-			"value": ""
-		},
-		{
-			"key": "userId2",
 			"value": ""
 		}
 	]

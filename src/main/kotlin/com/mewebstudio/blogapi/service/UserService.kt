@@ -1,5 +1,7 @@
 package com.mewebstudio.blogapi.service
 
+import com.mewebstudio.blogapi.dto.request.auth.ChangePasswordRequest
+import com.mewebstudio.blogapi.dto.request.auth.PasswordRequest
 import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
 import com.mewebstudio.blogapi.dto.request.user.IUserRequest
 import com.mewebstudio.blogapi.dto.request.user.RegisterUserRequest
@@ -37,6 +39,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val emailVerificationTokenService: EmailVerificationTokenService,
+    private val passwordResetTokenService: PasswordResetTokenService,
     private val messageSourceService: MessageSourceService
 ) {
     private val log: Logger by logger()
@@ -228,12 +231,12 @@ class UserService(
      */
     @Transactional
     fun create(user: User): User = run {
+        if (user.emailVerifiedAt == null) {
+            user.emailVerificationToken = emailVerificationTokenService.create(user)
+        }
+
         userRepository.save(user)
         log.info("[Create user] User created: ${user.email} - ${user.id}")
-
-        if (user.emailVerifiedAt == null) {
-            emailVerificationTokenService.create(user)
-        }
 
         user
     }
@@ -246,10 +249,35 @@ class UserService(
     @Transactional
     fun verifyEmail(token: String) {
         val user = emailVerificationTokenService.getUserByToken(token)
-        user!!.emailVerifiedAt = LocalDateTime.now()
+        user.emailVerifiedAt = LocalDateTime.now()
+        user.emailVerificationToken = null
         userRepository.save(user)
-        emailVerificationTokenService.deleteByUserId(user.id!!)
         log.info("Email verified: ${user.email} - ${user.id}")
+    }
+
+    /**
+     * Create password reset.
+     *
+     * @param request PasswordRequest
+     */
+    @Transactional
+    fun createPasswordReset(request: PasswordRequest) {
+        val user = findByEmail(request.email!!)
+        user.passwordResetToken = passwordResetTokenService.create(user)
+        userRepository.save(user)
+    }
+
+    /**
+     * Change password.
+     *
+     * @param token String
+     * @param request ChangePasswordRequest
+     */
+    fun changePassword(token: String, request: ChangePasswordRequest) {
+        val user = passwordResetTokenService.getUserByToken(token)
+        user.password = passwordEncoder.encode(request.password)
+        user.passwordResetToken = null
+        userRepository.save(user)
     }
 
     /**

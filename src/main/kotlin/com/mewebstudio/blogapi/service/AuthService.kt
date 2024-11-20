@@ -1,6 +1,8 @@
 package com.mewebstudio.blogapi.service
 
+import com.mewebstudio.blogapi.dto.request.auth.ChangePasswordRequest
 import com.mewebstudio.blogapi.dto.request.auth.LoginRequest
+import com.mewebstudio.blogapi.dto.request.auth.PasswordRequest
 import com.mewebstudio.blogapi.dto.request.user.RegisterUserRequest
 import com.mewebstudio.blogapi.dto.response.auth.TokenExpiresInResponse
 import com.mewebstudio.blogapi.dto.response.auth.TokenResponse
@@ -81,6 +83,23 @@ class AuthService(
      */
     fun refreshFromBearerString(bearer: String): TokenResponse? =
         refresh(jwtTokenProvider.extractJwtFromBearerString(bearer)!!)
+
+    /**
+     * Password reset.
+     * @param request PasswordRequest
+     */
+    fun createPasswordReset(request: PasswordRequest) {
+        userService.createPasswordReset(request)
+    }
+
+    /**
+     * Change password.
+     * @param token String
+     * @param request ChangePasswordRequest
+     */
+    fun changePassword(token: String, request: ChangePasswordRequest) {
+        userService.changePassword(token, request)
+    }
 
     /**
      * Getting username from the security context.

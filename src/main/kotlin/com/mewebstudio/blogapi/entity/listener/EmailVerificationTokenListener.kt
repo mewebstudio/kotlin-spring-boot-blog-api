@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
-class EmailVerificationListener(private val mailSenderService: MailSenderService) {
+class EmailVerificationTokenListener(private val mailSenderService: MailSenderService) {
     private val log: Logger by logger()
 
     @Async

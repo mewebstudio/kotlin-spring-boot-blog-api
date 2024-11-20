@@ -52,6 +52,9 @@ class UserServiceTest {
     private lateinit var emailVerificationTokenService: EmailVerificationTokenService
 
     @Mock
+    private lateinit var passwordResetTokenService: PasswordResetTokenService
+
+    @Mock
     private var authentication: Authentication? = null
 
     @Mock

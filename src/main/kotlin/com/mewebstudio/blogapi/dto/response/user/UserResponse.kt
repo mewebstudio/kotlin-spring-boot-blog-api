@@ -108,7 +108,7 @@ data class UserResponse(
             id = user.id.toString(),
             firstname = user.firstname,
             lastname = user.lastname,
-            fullName = user.fullName,
+            fullName = user.getFullName(),
             gender = user.gender.value,
             email = user.email,
             roles = user.roles.stream().map { it.lowercase() }.toArray { size -> arrayOfNulls(size) },

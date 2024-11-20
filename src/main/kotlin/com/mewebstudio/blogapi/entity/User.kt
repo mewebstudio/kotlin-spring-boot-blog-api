@@ -45,8 +45,6 @@ class User(
     @Column(name = "lastname", nullable = false, length = 50)
     var lastname: String? = null,
 
-    var fullName: String = "$firstname $lastname",
-
     @Column(name = "gender", nullable = false, length = 16)
     @Enumerated(EnumType.STRING)
     var gender: Enums.GenderEnum = Enums.GenderEnum.UNKNOWN,
@@ -76,5 +74,7 @@ class User(
     @Column(name = "email_verified_at")
     var emailVerifiedAt: LocalDateTime? = null
 ) : AbstractBaseEntity() {
+    fun getFullName(): String = "$firstname $lastname"
+
     override fun toString(): String = this::class.simpleName + "(id = $id)"
 }

@@ -1,6 +1,8 @@
 package com.mewebstudio.blogapi.controller
 
+import com.mewebstudio.blogapi.dto.request.auth.ChangePasswordRequest
 import com.mewebstudio.blogapi.dto.request.auth.LoginRequest
+import com.mewebstudio.blogapi.dto.request.auth.PasswordRequest
 import com.mewebstudio.blogapi.dto.request.user.RegisterUserRequest
 import com.mewebstudio.blogapi.dto.response.DetailedErrorResponse
 import com.mewebstudio.blogapi.dto.response.ErrorResponse
@@ -178,6 +180,76 @@ class AuthController(
         @Parameter(description = "Refresh token", required = true)
         @RequestHeader("Authorization") @Validated refreshToken: String
     ): ResponseEntity<TokenResponse> = ResponseEntity.ok(authService.refreshFromBearerString(refreshToken))
+
+    @PostMapping("/password")
+    @Operation(
+        summary = "Password reset endpoint",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successful operation",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = SuccessResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not found",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            )
+        ]
+    )
+    fun password(
+        @Parameter(description = "Request body to password reset", required = true)
+        @RequestBody @Validated request: PasswordRequest
+    ): ResponseEntity<SuccessResponse> = run {
+        authService.createPasswordReset(request)
+        ResponseEntity.ok(SuccessResponse(messageSourceService.get("password_reset_email_sent")))
+    }
+
+    @PostMapping("/password/{token}")
+    @Operation(
+        summary = "Change password endpoint",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Successful operation",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = SuccessResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Not found",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = ErrorResponse::class)
+                )]
+            ),
+            ApiResponse(
+                responseCode = "422",
+                description = "Validation failed",
+                content = [Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = Schema(implementation = DetailedErrorResponse::class)
+                )]
+            )
+        ]
+    )
+    fun changePassword(
+        @Parameter(description = "Password reset token", required = true)
+        @PathVariable("token") @Validated token: String,
+        @Parameter(description = "Request body to change password", required = true)
+        @RequestBody @Validated request: ChangePasswordRequest
+    ): ResponseEntity<SuccessResponse> = run {
+        authService.changePassword(token, request)
+        ResponseEntity.ok(SuccessResponse(messageSourceService.get("password_reset_successfully")))
+    }
 
     @GetMapping("/logout")
     @Operation(

@@ -1,8 +1,10 @@
 package com.mewebstudio.blogapi.entity
 
+import com.mewebstudio.blogapi.entity.listener.PasswordTokenListener
 import com.mewebstudio.blogapi.util.Constants.PASSWORD_RESET_TOKEN_LENGTH
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
 import jakarta.persistence.FetchType
 import jakarta.persistence.ForeignKey
 import jakarta.persistence.JoinColumn
@@ -23,8 +25,9 @@ import java.util.*
         UniqueConstraint(columnNames = ["token"], name = "uk_password_reset_tokens_token")
     ]
 )
+@EntityListeners(PasswordTokenListener::class)
 class PasswordResetToken(
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
         name = "user_id",

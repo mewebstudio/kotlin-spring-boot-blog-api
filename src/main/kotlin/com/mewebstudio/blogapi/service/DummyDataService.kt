@@ -28,7 +28,8 @@ class DummyDataService(private val userService: UserService) {
                 firstname = "John",
                 lastname = "Doe",
                 gender = Enums.GenderEnum.MALE.name,
-                roles = listOf(Enums.RoleEnum.ADMIN.name, Enums.RoleEnum.USER.name)
+                roles = listOf(Enums.RoleEnum.ADMIN.name, Enums.RoleEnum.USER.name),
+                isEmailVerified = true
             ))
 
             userService.create(CreateUserRequest(
@@ -37,7 +38,8 @@ class DummyDataService(private val userService: UserService) {
                 firstname = "Jane",
                 lastname = "Doe",
                 gender = Enums.GenderEnum.FEMALE.name,
-                roles = listOf(Enums.RoleEnum.USER.name)
+                roles = listOf(Enums.RoleEnum.USER.name),
+                isEmailVerified = true
             ))
         }
     }

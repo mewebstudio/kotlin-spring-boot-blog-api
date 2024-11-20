@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.service
 
 import com.mewebstudio.blogapi.entity.EmailVerificationToken
+import com.mewebstudio.blogapi.entity.PasswordResetToken
 import com.mewebstudio.blogapi.util.logger
 import jakarta.mail.MessagingException
 import jakarta.mail.internet.InternetAddress
@@ -42,29 +43,64 @@ class MailSenderService(
         try {
             val user = emailVerificationToken.user
             if (user == null) {
-                log.error("[EmailService] User not found: $emailVerificationToken")
+                log.error("[Mail Sender] - [E-mail verification] User not found: $emailVerificationToken")
                 return
             }
 
-            log.info("[EmailService] Sending verification e-mail: ${user.id} - ${user.email}")
+            log.info("[Mail Sender] - [E-mail verification] Sending verification e-mail: ${user.id} - ${user.email}")
 
             val url = "$frontendUrl/auth/email-verification/${emailVerificationToken.token}"
             val ctx = createContext()
             ctx.setVariable("firstname", user.firstname)
             ctx.setVariable("lastname", user.lastname)
-            ctx.setVariable("fullName", user.fullName)
+            ctx.setVariable("fullName", user.getFullName())
             ctx.setVariable("url", url)
 
             send(
                 from = InternetAddress(senderAddress, senderName),
-                to = InternetAddress(user.email, user.fullName),
+                to = InternetAddress(user.email, user.getFullName()),
                 subject = messageSourceService.get("email_verification"),
                 content = templateEngine.process("mail/user-email-verification", ctx)
             )
 
-            log.info("[EmailService] Sent verification e-mail: ${user.id} - ${user.email}")
+            log.info("[Mail Sender] - [E-mail verification] Sent verification e-mail: ${user.id} - ${user.email}")
         } catch (e: Exception) {
-            log.error("[EmailService] Failed to send verification e-mail: ${e.message}")
+            log.error("[Mail Sender] - [E-mail verification] Failed to send verification e-mail: ${e.message}")
+        }
+    }
+
+    /**
+     * Send user password reset link.
+     *
+     * @param passwordResetToken PasswordResetToken
+     */
+    fun sendUserPasswordReset(passwordResetToken: PasswordResetToken) {
+        try {
+            val user = passwordResetToken.user
+            if (user == null) {
+                log.error("[Mail Sender] - [Password reset] -  User not found: $passwordResetToken")
+                return
+            }
+
+            log.info("[Mail Sender] - [Password reset] Sending verification e-mail: ${user.id} - ${user.email}")
+
+            val url = "$frontendUrl/auth/password/${passwordResetToken.token}"
+            val ctx = createContext()
+            ctx.setVariable("firstname", user.firstname)
+            ctx.setVariable("lastname", user.lastname)
+            ctx.setVariable("fullName", user.getFullName())
+            ctx.setVariable("url", url)
+
+            send(
+                from = InternetAddress(senderAddress, senderName),
+                to = InternetAddress(user.email, user.getFullName()),
+                subject = messageSourceService.get("password_reset"),
+                content = templateEngine.process("mail/user-password-reset", ctx)
+            )
+
+            log.info("[Mail Sender] - [Password reset] Sent password reset token e-mail: ${user.id} - ${user.email}")
+        } catch (e: Exception) {
+            log.error("[Mail Sender] - [Password reset] Failed to send password reset token: ${e.message}")
         }
     }
 

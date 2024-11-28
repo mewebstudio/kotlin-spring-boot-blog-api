@@ -38,21 +38,20 @@ class AppExceptionHandler(private val messageSourceService: MessageSourceService
     private val log: Logger by logger()
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupported(
-        e: HttpRequestMethodNotSupportedException
-    ): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.METHOD_NOT_ALLOWED, messageSourceService.get("method_not_supported"))
-    }
+    fun handleHttpRequestMethodNotSupported(e: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponse> =
+        build(
+            HttpStatus.METHOD_NOT_ALLOWED,
+            messageSourceService.get("method_not_supported")
+        ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadable(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.BAD_REQUEST, "${messageSourceService.get("malformed_json_request")}: ${e.message}")
-    }
+    fun handleHttpMessageNotReadable(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.BAD_REQUEST,
+        "${messageSourceService.get("malformed_json_request")}: ${e.message}"
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(BindException::class)
-    fun handleBindException(e: BindException): ResponseEntity<ErrorResponse> {
+    fun handleBindException(e: BindException): ResponseEntity<ErrorResponse> = run {
         log.error(e.toString(), e.message)
         val errors: MutableMap<String, String?> = HashMap()
 
@@ -62,7 +61,7 @@ class AppExceptionHandler(private val messageSourceService: MessageSourceService
             errors[fieldName] = message
         })
 
-        return build(HttpStatus.UNPROCESSABLE_ENTITY, messageSourceService.get("validation_error"), errors)
+        build(HttpStatus.UNPROCESSABLE_ENTITY, messageSourceService.get("validation_error"), errors)
     }
 
     @ExceptionHandler(
@@ -77,50 +76,50 @@ class AppExceptionHandler(private val messageSourceService: MessageSourceService
         MissingRequestHeaderException::class,
         MalformedJwtException::class
     )
-    fun handleBadRequestException(e: Exception): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.BAD_REQUEST, (if (e.cause != null) e.cause!!.message else e.message)!!)
-    }
+    fun handleBadRequestException(e: Exception): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.BAD_REQUEST,
+        (e.cause?.message ?: e.message)!!
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(TokenExpiredException::class)
-    fun handleTokenExpiredRequestException(e: TokenExpiredException): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.UNAUTHORIZED, (if (e.cause != null) e.cause!!.message else e.message)!!)
-    }
+    fun handleTokenExpiredRequestException(e: TokenExpiredException): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.UNAUTHORIZED,
+        (e.cause?.message ?: e.message)!!
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(NotFoundException::class, NoResourceFoundException::class)
-    fun handleNotFoundException(e: Exception): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.NOT_FOUND, (if (e.cause != null) e.cause!!.message else e.message)!!)
-    }
+    fun handleNotFoundException(e: Exception): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.NOT_FOUND,
+        (e.cause?.message ?: e.message)!!
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(
         InternalAuthenticationServiceException::class,
         BadCredentialsException::class,
         AuthenticationCredentialsNotFoundException::class
     )
-    fun handleBadCredentialsException(e: Exception): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.UNAUTHORIZED, (if (e.cause != null) e.cause!!.message else e.message)!!)
-    }
+    fun handleBadCredentialsException(e: Exception): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.UNAUTHORIZED,
+        (e.cause?.message ?: e.message)!!
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(AccessDeniedException::class)
-    fun handleAccessDeniedException(e: Exception): ResponseEntity<ErrorResponse> {
-        log.error(e.toString(), e.message)
-        return build(HttpStatus.FORBIDDEN, (if (e.cause != null) e.cause!!.message else e.message)!!)
-    }
+    fun handleAccessDeniedException(e: Exception): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.FORBIDDEN,
+        (e.cause?.message ?: e.message)!!
+    ).also { log.error(e.toString(), e.message) }
 
     @ExceptionHandler(ExpectationException::class)
     fun handleExpectationException(e: Exception): ResponseEntity<ErrorResponse> {
         log.error(e.toString(), e.message)
-        return build(HttpStatus.EXPECTATION_FAILED, (if (e.cause != null) e.cause!!.message else e.message)!!)
+        return build(HttpStatus.EXPECTATION_FAILED, (e.cause?.message ?: e.message)!!)
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleAllExceptions(e: Exception): ResponseEntity<ErrorResponse> {
-        log.error("Exception: {}", ExceptionUtils.getStackTrace(e))
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, messageSourceService.get("server_error"))
-    }
+    fun handleAllExceptions(e: Exception): ResponseEntity<ErrorResponse> = build(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        messageSourceService.get("server_error")
+    ).also { log.error("Exception: {}", ExceptionUtils.getStackTrace(e)) }
 
     /**
      * Build error response.
@@ -134,15 +133,11 @@ class AppExceptionHandler(private val messageSourceService: MessageSourceService
         httpStatus: HttpStatus,
         message: String,
         errors: MutableMap<String, String?>
-    ): ResponseEntity<ErrorResponse> {
-        return ResponseEntity.status(httpStatus).body(
-            if (errors.isNotEmpty()) {
-                DetailedErrorResponse(message = message, items = errors)
-            } else {
-                ErrorResponse(message = message)
-            }
-        )
-    }
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.status(httpStatus).body(
+        errors.takeIf { it.isNotEmpty() }
+            ?.let { DetailedErrorResponse(message = message, items = it) }
+            ?: ErrorResponse(message = message)
+    )
 
     /**
      * Build error response.
@@ -151,7 +146,6 @@ class AppExceptionHandler(private val messageSourceService: MessageSourceService
      * @param message    String for response message field
      * @return ResponseEntity
      */
-    private fun build(httpStatus: HttpStatus, message: String): ResponseEntity<ErrorResponse> {
-        return build(httpStatus, message, HashMap())
-    }
+    private fun build(httpStatus: HttpStatus, message: String): ResponseEntity<ErrorResponse> =
+        build(httpStatus, message, HashMap())
 }

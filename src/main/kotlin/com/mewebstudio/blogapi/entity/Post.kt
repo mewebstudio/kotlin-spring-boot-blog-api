@@ -43,10 +43,10 @@ class Post(
     @Column(name = "title", nullable = false)
     var title: String? = null,
 
-    @Column(name = "slug", nullable = false)
+    @Column(name = "slug", nullable = false, columnDefinition = "text")
     var slug: String? = null,
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "text")
     var content: String? = null,
 
     @Column(name = "published_at")

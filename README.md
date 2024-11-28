@@ -46,11 +46,11 @@ secure token storage.
     - Create endpoints for password reset.
     - Add email notifications for password reset requests.
 
-- [ ] **User Management**
+- [X] **User Management**
     - Create endpoints for user registration and profile management.
     - Add user roles and permissions.
 
-- [ ] **Category Management**
+- [X] **Category Management**
     - Implement CRUD operations for categories.
     - Allow categorization of posts.
 

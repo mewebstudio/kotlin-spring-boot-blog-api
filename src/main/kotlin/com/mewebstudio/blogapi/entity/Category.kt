@@ -27,10 +27,10 @@ class Category(
     @Column(name = "title", nullable = false)
     var title: String? = null,
 
-    @Column(name = "slug", nullable = false)
+    @Column(name = "slug", nullable = false, columnDefinition = "text")
     var slug: String? = null,
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     var description: String? = null,
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.DETACH])

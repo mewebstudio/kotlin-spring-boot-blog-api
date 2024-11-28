@@ -1,12 +1,10 @@
 package com.mewebstudio.blogapi.entity.specification.criteria
 
-import com.mewebstudio.blogapi.util.Enums
 import java.time.LocalDateTime
+import java.util.UUID
 
-data class UserCriteria(
-    var roles: List<Enums.RoleEnum>? = null,
-    var genders: List<Enums.GenderEnum>? = null,
-    var isBlocked: Boolean? = null,
+data class CategoryCriteria(
+    var users: List<UUID> = emptyList(),
     override var q: String? = null,
     override var createdAtStart: LocalDateTime? = null,
     override var createdAtEnd: LocalDateTime? = null,

@@ -1,15 +1,15 @@
 package com.mewebstudio.blogapi.controller
 
-import com.mewebstudio.blogapi.dto.request.user.CreateUserRequest
-import com.mewebstudio.blogapi.dto.request.user.UpdateUserRequest
-import com.mewebstudio.blogapi.dto.request.user.UserFilterRequest
+import com.mewebstudio.blogapi.dto.request.category.CategoryFilterRequest
+import com.mewebstudio.blogapi.dto.request.category.CreateCategoryRequest
+import com.mewebstudio.blogapi.dto.request.category.UpdateCategoryRequest
 import com.mewebstudio.blogapi.dto.response.DetailedErrorResponse
 import com.mewebstudio.blogapi.dto.response.ErrorResponse
-import com.mewebstudio.blogapi.dto.response.user.UserPaginationResponse
-import com.mewebstudio.blogapi.dto.response.user.UserResponse
-import com.mewebstudio.blogapi.entity.User
+import com.mewebstudio.blogapi.dto.response.category.CategoryPaginationResponse
+import com.mewebstudio.blogapi.dto.response.category.CategoryResponse
+import com.mewebstudio.blogapi.entity.Category
 import com.mewebstudio.blogapi.security.CheckRole
-import com.mewebstudio.blogapi.service.UserService
+import com.mewebstudio.blogapi.service.CategoryService
 import com.mewebstudio.blogapi.util.Constants.SECURITY_SCHEME_NAME
 import com.mewebstudio.blogapi.util.Enums
 import io.swagger.v3.oas.annotations.Operation
@@ -37,13 +37,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/users")
-@CheckRole([Enums.RoleEnum.ADMIN])
-@Tag(name = "003. Users", description = "Users API")
-class UserController(private val userService: UserService) : AbstractBaseController() {
+@RequestMapping("/categories")
+@Tag(name = "004. Categories", description = "Categories API")
+class CategoryController(private val categoryService: CategoryService) {
     @GetMapping
     @Operation(
-        summary = "List users endpoint",
+        summary = "List categories endpoint",
         security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
         responses = [
             ApiResponse(
@@ -51,7 +50,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
                 description = "Successful operation",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = UserPaginationResponse::class)
+                    schema = Schema(implementation = CategoryPaginationResponse::class)
                 )]
             ),
             ApiResponse(
@@ -73,23 +72,23 @@ class UserController(private val userService: UserService) : AbstractBaseControl
         ]
     )
     fun list(
-        @ParameterObject @ModelAttribute @Validated request: UserFilterRequest
-    ): ResponseEntity<UserPaginationResponse> = run {
-        val users: Page<User> = userService.findAll(request)
+        @ParameterObject @ModelAttribute @Validated request: CategoryFilterRequest
+    ): ResponseEntity<CategoryPaginationResponse> = run {
+        val categories: Page<Category> = categoryService.findAll(request)
         ResponseEntity.ok(
-            UserPaginationResponse(
+            CategoryPaginationResponse(
                 page = request.page,
-                pages = users.totalPages,
-                size = users.size,
-                total = users.totalElements,
-                items = users.map { UserResponse.convert(it) }.toList()
+                pages = categories.totalPages,
+                size = categories.size,
+                total = categories.totalElements,
+                items = categories.map { CategoryResponse.convert(it) }.toList()
             )
         )
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idOrSlug}")
     @Operation(
-        summary = "Get user by id endpoint",
+        summary = "Get category by id or slug endpoint",
         security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
         responses = [
             ApiResponse(
@@ -97,7 +96,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
                 description = "Successful operation",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = UserResponse::class)
+                    schema = Schema(implementation = CategoryResponse::class)
                 )]
             ),
             ApiResponse(
@@ -119,13 +118,18 @@ class UserController(private val userService: UserService) : AbstractBaseControl
         ]
     )
     fun show(
-        @Parameter(name = "id", description = "User ID", required = true)
-        @PathVariable("id") id: String
-    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.findById(id)))
+        @Parameter(name = "idOrSlug", description = "Category ID or Slug", required = true)
+        @PathVariable("idOrSlug") idOrSlug: String
+    ): ResponseEntity<CategoryResponse> = ResponseEntity.ok(
+        CategoryResponse.convert(
+            categoryService.findByIdOrSlug(idOrSlug)
+        )
+    )
 
     @PostMapping
+    @CheckRole([Enums.RoleEnum.ADMIN])
     @Operation(
-        summary = "Create user endpoint",
+        summary = "Create category endpoint",
         security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
         responses = [
             ApiResponse(
@@ -133,7 +137,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
                 description = "Success operation",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = UserResponse::class)
+                    schema = Schema(implementation = CategoryResponse::class)
                 )]
             ),
             ApiResponse(
@@ -164,14 +168,15 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     )
     @Throws(BindException::class)
     fun create(
-        @Parameter(description = "Request body to user create", required = true)
-        @RequestBody @Validated request: CreateUserRequest
-    ): ResponseEntity<UserResponse> =
-        ResponseEntity<UserResponse>(UserResponse.convert(userService.create(request)), HttpStatus.CREATED)
+        @Parameter(description = "Request body to category create", required = true)
+        @RequestBody @Validated request: CreateCategoryRequest
+    ): ResponseEntity<CategoryResponse> =
+        ResponseEntity<CategoryResponse>(CategoryResponse.convert(categoryService.create(request)), HttpStatus.CREATED)
 
     @PatchMapping("/{id}")
+    @CheckRole([Enums.RoleEnum.ADMIN])
     @Operation(
-        summary = "Update user by id endpoint",
+        summary = "Update category by id endpoint",
         security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
         responses = [
             ApiResponse(
@@ -179,7 +184,7 @@ class UserController(private val userService: UserService) : AbstractBaseControl
                 description = "Success operation",
                 content = [Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = Schema(implementation = UserResponse::class)
+                    schema = Schema(implementation = CategoryResponse::class)
                 )]
             ),
             ApiResponse(
@@ -218,15 +223,17 @@ class UserController(private val userService: UserService) : AbstractBaseControl
     )
     @Throws(BindException::class)
     fun update(
-        @Parameter(name = "id", description = "User ID", required = true)
+        @Parameter(name = "id", description = "Category ID", required = true)
         @PathVariable("id") id: String,
-        @Parameter(description = "Request body to user update", required = true)
-        @RequestBody @Validated request: UpdateUserRequest
-    ): ResponseEntity<UserResponse> = ResponseEntity.ok(UserResponse.convert(userService.update(id, request)))
+        @Parameter(description = "Request body to category update", required = true)
+        @RequestBody @Validated request: UpdateCategoryRequest
+    ): ResponseEntity<CategoryResponse> =
+        ResponseEntity.ok(CategoryResponse.convert(categoryService.update(id, request)))
 
     @DeleteMapping("/{id}")
+    @CheckRole([Enums.RoleEnum.ADMIN])
     @Operation(
-        summary = "Delete user by id endpoint",
+        summary = "Delete category by id endpoint",
         security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
         responses = [
             ApiResponse(
@@ -253,10 +260,10 @@ class UserController(private val userService: UserService) : AbstractBaseControl
         ]
     )
     fun delete(
-        @Parameter(name = "id", description = "User ID", required = true)
+        @Parameter(name = "id", description = "Category ID", required = true)
         @PathVariable("id") id: String
-    ): ResponseEntity<UserResponse> = run {
-        userService.delete(id)
+    ): ResponseEntity<CategoryResponse> = run {
+        categoryService.delete(id)
         ResponseEntity.noContent().build()
     }
 }

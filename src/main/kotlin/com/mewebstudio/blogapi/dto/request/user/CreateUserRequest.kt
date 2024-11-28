@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Size
 
 @FieldMatch(first = "password", second = "passwordConfirm", message = "{password_mismatch}")
 data class CreateUserRequest(
     @field:NotBlank(message = "{not_blank}")
+    @field:Size(max = 50, message = "{max_length}")
     @Schema(
         name = "firstname",
         description = "Firstname",
@@ -23,6 +25,7 @@ data class CreateUserRequest(
     override var firstname: String?,
 
     @field:NotBlank(message = "{not_blank}")
+    @field:Size(max = 50, message = "{max_length}")
     @Schema(
         name = "lastname",
         description = "Lastname",
@@ -46,6 +49,7 @@ data class CreateUserRequest(
 
     @field:NotBlank(message = "{not_blank}")
     @field:Email(message = "{invalid_email}")
+    @field:Size(max = 255, message = "{max_length}")
     @Schema(
         name = "email",
         description = "E-mail",

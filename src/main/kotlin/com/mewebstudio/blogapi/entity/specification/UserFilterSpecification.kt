@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.entity.specification
 
 import com.mewebstudio.blogapi.entity.User
+import com.mewebstudio.blogapi.entity.specification.criteria.SpecificationHelper
 import com.mewebstudio.blogapi.entity.specification.criteria.UserCriteria
 import com.mewebstudio.blogapi.util.Enums
 import jakarta.persistence.criteria.CriteriaBuilder
@@ -22,29 +23,19 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
             predicates.add(root.get<Enums.GenderEnum>("gender").`in`(it))
         }
 
-        criteria.createdAtStart?.let {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), it))
-        }
-
-        criteria.createdAtEnd?.let {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), it))
-        }
-
-        criteria.updatedAtStart?.let {
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updatedAt"), it))
-        }
-
-        criteria.updatedAtEnd?.let {
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), it))
-        }
-
         criteria.isBlocked?.let {
             predicates.add(criteriaBuilder.equal(root.get<Boolean>("blockedAt").isNotNull(), it))
         }
 
+        SpecificationHelper.addDateRangePredicates(criteria, root, criteriaBuilder, predicates)
+
         criteria.q?.let { q ->
             val qPattern = "%${q.lowercase(Locale.getDefault())}%"
-            predicates.add(buildSearchPredicate(root, criteriaBuilder, qPattern))
+            predicates.add(
+                SpecificationHelper.addSearchPredicate(
+                    root, criteriaBuilder, qPattern, listOf("id", "email", "firstname", "lastname")
+                )
+            )
         }
 
         query?.where(*predicates.toTypedArray())?.distinct(true)
@@ -67,17 +58,4 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
             )
         )
     }.toTypedArray())
-
-    /**
-     * Build search predicate.
-     */
-    private fun buildSearchPredicate(
-        root: Root<User>,
-        criteriaBuilder: CriteriaBuilder,
-        pattern: String
-    ): Predicate = criteriaBuilder.or(
-        criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), pattern),
-        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), pattern),
-        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), pattern)
-    )
 }

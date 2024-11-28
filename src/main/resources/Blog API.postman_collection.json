@@ -617,6 +617,245 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Categories",
+					"item": [
+						{
+							"name": "List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200)",
+											"",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"categoryId\", response.items[0].id);",
+											"",
+											"    if (response.items.length > 1) {",
+											"        response.items.forEach((item, index) => {",
+											"            if (index !== 0) {",
+											"                pm.collectionVariables.set(`categoryId${index + 1}`, item.id);",
+											"            }",
+											"        });",
+											"    }",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/categories",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"categories"
+									],
+									"query": [
+										{
+											"key": "roles",
+											"value": "admin,user",
+											"disabled": true
+										},
+										{
+											"key": "createdAtStart",
+											"value": "2023-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "createdAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "updatedAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "asc",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt",
+											"disabled": true
+										},
+										{
+											"key": "q",
+											"value": "lorem",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201)",
+											"",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"categoryId\", response.id)",
+											"    pm.collectionVariables.set(\"categorySlug\", response.slug)",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Lorem ipsum\",\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/categories",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/categories/{{categorySlug}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"categories",
+										"{{categorySlug}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Lorem ipsum\",\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/categories/{{categoryId}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"categories",
+										"{{categoryId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/categories/{{categoryId}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"categories",
+										"{{categoryId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			],
 			"auth": {
@@ -687,6 +926,66 @@
 		},
 		{
 			"key": "refreshToken",
+			"value": ""
+		},
+		{
+			"key": "categoryId",
+			"value": ""
+		},
+		{
+			"key": "categorySlug",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "userId2",
+			"value": ""
+		},
+		{
+			"key": "categoryId2",
+			"value": ""
+		},
+		{
+			"key": "categoryId3",
+			"value": ""
+		},
+		{
+			"key": "categoryId4",
+			"value": ""
+		},
+		{
+			"key": "categoryId5",
+			"value": ""
+		},
+		{
+			"key": "categoryId6",
+			"value": ""
+		},
+		{
+			"key": "categoryId7",
+			"value": ""
+		},
+		{
+			"key": "categoryId8",
+			"value": ""
+		},
+		{
+			"key": "categoryId9",
+			"value": ""
+		},
+		{
+			"key": "categoryId10",
+			"value": ""
+		},
+		{
+			"key": "categoryId11",
+			"value": ""
+		},
+		{
+			"key": "categoryId12",
 			"value": ""
 		}
 	]

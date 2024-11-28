@@ -5,8 +5,10 @@ import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
 import com.mewebstudio.blogapi.util.Enums
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.Size
 
 data class UpdateProfileRequest(
+    @field:Size(max = 50, message = "{max_length}")
     @Schema(
         name = "firstname",
         description = "Firstname",
@@ -16,6 +18,7 @@ data class UpdateProfileRequest(
     )
     override var firstname: String?,
 
+    @field:Size(max = 50, message = "{max_length}")
     @Schema(
         name = "lastname",
         description = "Lastname",
@@ -37,6 +40,7 @@ data class UpdateProfileRequest(
     override var gender: String?,
 
     @field:Email(message = "{invalid_email}")
+    @field:Size(max = 255, message = "{max_length}")
     @Schema(
         name = "email",
         description = "E-mail",

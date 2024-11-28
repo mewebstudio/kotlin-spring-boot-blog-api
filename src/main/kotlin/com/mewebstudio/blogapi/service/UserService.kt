@@ -235,10 +235,7 @@ class UserService(
             user.emailVerificationToken = emailVerificationTokenService.create(user)
         }
 
-        userRepository.save(user)
-        log.info("[Create user] User created: ${user.email} - ${user.id}")
-
-        user
+        userRepository.save(user).also { log.info("[Create user] User created: $user") }
     }
 
     /**
@@ -251,8 +248,7 @@ class UserService(
         val user = emailVerificationTokenService.getUserByToken(token)
         user.emailVerifiedAt = LocalDateTime.now()
         user.emailVerificationToken = null
-        userRepository.save(user)
-        log.info("Email verified: ${user.email} - ${user.id}")
+        userRepository.save(user).also { log.info("Email verified: $user") }
     }
 
     /**
@@ -264,7 +260,7 @@ class UserService(
     fun createPasswordReset(request: PasswordRequest) {
         val user = findByEmail(request.email!!)
         user.passwordResetToken = passwordResetTokenService.create(user)
-        userRepository.save(user)
+        userRepository.save(user).also { log.info("Password reset created: $user") }
     }
 
     /**
@@ -277,7 +273,7 @@ class UserService(
         val user = passwordResetTokenService.getUserByToken(token)
         user.password = passwordEncoder.encode(request.password)
         user.passwordResetToken = null
-        userRepository.save(user)
+        userRepository.save(user).also { log.info("Password changed: $user") }
     }
 
     /**
@@ -287,22 +283,19 @@ class UserService(
      * @param request UpdateUserRequest
      * @return User
      */
-    fun update(id: String, request: UpdateUserRequest): User {
+    fun update(id: String, request: UpdateUserRequest): User = run {
         val user = findById(id)
         updateEqualFields(request, user)
 
-        if (request.roles.isNullOrEmpty().not()) {
-            user.roles = request.roles!!.map { it.uppercase() }
+        request.roles?.takeIf { it.isNotEmpty() }?.let {
+            user.roles = it.map { role -> role.uppercase() }
         }
 
-        if (request.isBlocked != null) {
-            user.blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
+        request.isBlocked?.let {
+            user.blockedAt = if (it) LocalDateTime.now() else null
         }
 
-        userRepository.save(user)
-        log.info("User updated: ${user.email} - ${user.id}")
-
-        return user
+        userRepository.save(user).also { log.info("User updated: $user") }
     }
 
     /**
@@ -315,10 +308,7 @@ class UserService(
         val user = getUser()
         updateEqualFields(request, user)
 
-        userRepository.save(user)
-        log.info("Profile updated: ${user.email} - ${user.id}")
-
-        user
+        userRepository.save(user).also { log.info("Profile updated: $user") }
     }
 
     /**
@@ -327,8 +317,7 @@ class UserService(
      * @param id UUID
      */
     fun delete(id: UUID) {
-        userRepository.delete(findById(id))
-        log.info("User deleted: $id")
+        userRepository.delete(findById(id)).also { log.info("User deleted: $id") }
     }
 
     /**
@@ -384,9 +373,9 @@ class UserService(
      */
     private fun updateEqualFields(request: IUserRequest, user: User) {
         val bindingResult = BeanPropertyBindingResult(request, "request")
-        if (request.email.isNullOrEmpty().not() && request.email.equals(user.email, ignoreCase = true).not()) {
-            userRepository.findByEmailAndIdNot(request.email!!.lowercase(), user.id!!)?.let {
-                log.error("User with email: ${request.email} already exists")
+        request.email?.takeIf { it.isNotEmpty() && !it.equals(user.email, ignoreCase = true) }?.let { it ->
+            userRepository.findByEmailAndIdNot(it.lowercase(), user.id!!)?.let {
+                log.error("User with email: $it already exists")
                 bindingResult.addError(
                     FieldError(
                         bindingResult.objectName, "email",

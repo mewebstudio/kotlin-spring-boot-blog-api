@@ -190,6 +190,23 @@ class UserService(
     }
 
     /**
+     * Return the authenticated user.
+     *
+     * @param throwable Boolean
+     * @return User
+     */
+    fun getUser(throwable: Boolean): User? = run {
+        try {
+            getUser()
+        } catch (e: Exception) {
+            if (throwable) {
+                throw e
+            }
+            null
+        }
+    }
+
+    /**
      * Register a new user.
      *
      * @param request RegisterUserRequest
@@ -221,7 +238,7 @@ class UserService(
         user.roles = request.roles!!.map { it.uppercase() }
         user.blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
         user.emailVerifiedAt = request.isEmailVerified?.let { if (it) LocalDateTime.now() else null }
-        user.createdUser = getUser()
+        user.createdUser = getUser(false)
 
         create(user)
     }

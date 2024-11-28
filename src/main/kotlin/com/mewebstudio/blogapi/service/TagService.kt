@@ -14,6 +14,9 @@ import com.mewebstudio.blogapi.util.logger
 import org.slf4j.Logger
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import org.springframework.validation.BeanPropertyBindingResult
+import org.springframework.validation.BindException
+import org.springframework.validation.FieldError
 import java.util.UUID
 
 @Service
@@ -85,9 +88,30 @@ class TagService(
      * @param request CreateTagRequest - The request object.
      * @return Tag - The created tag.
      */
-    fun create(request: CreateTagRequest): Tag = tagRepository.save(
-        Tag(title = request.title, createdUser = userService.getUser()).apply { setSlug(this) }
-    ).also { log.info("Tag created: $it") }
+    @Throws(BindException::class)
+    fun create(request: CreateTagRequest): Tag = run {
+        val bindingResult = BeanPropertyBindingResult(request, "request")
+        tagRepository.existsByTitle(request.title!!, null).takeIf { it }?.let {
+            log.error("[Create tag] Tag already exists with title: ${request.title}")
+            bindingResult.addError(
+                FieldError(
+                    bindingResult.objectName, "title",
+                    messageSourceService.get(
+                        "already_exists_with_param",
+                        arrayOf(messageSourceService.get("tag"))
+                    )
+                )
+            )
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw BindException(bindingResult)
+        }
+
+        tagRepository.save(
+            Tag(title = request.title, createdUser = userService.getUser()).apply { setSlug(this) }
+        ).also { log.info("Tag created: $it") }
+    }
 
     /**
      * Update a tag.
@@ -96,6 +120,7 @@ class TagService(
      * @param request UpdateTagRequest - The request object.
      * @return Tag - The updated tag.
      */
+    @Throws(BindException::class)
     fun update(id: UUID, request: UpdateTagRequest): Tag = run {
         val tag = tagRepository.findById(id).orElseThrow {
             NotFoundException(
@@ -104,6 +129,24 @@ class TagService(
                     arrayOf(messageSourceService.get("tag"))
                 )
             )
+        }
+
+        val bindingResult = BeanPropertyBindingResult(request, "request")
+        tagRepository.existsByTitle(request.title!!, tag.id).takeIf { it }?.let {
+            log.error("[Update tag] Tag already exists with title and id: ${request.title}, ${tag.id}")
+            bindingResult.addError(
+                FieldError(
+                    bindingResult.objectName, "title",
+                    messageSourceService.get(
+                        "already_exists_with_param",
+                        arrayOf(messageSourceService.get("tag"))
+                    )
+                )
+            )
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw BindException(bindingResult)
         }
 
         request.title?.takeIf { it.isNotEmpty() }?.let { tag.title = it }

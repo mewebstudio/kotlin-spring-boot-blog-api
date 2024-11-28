@@ -14,6 +14,9 @@ import com.mewebstudio.blogapi.util.logger
 import org.slf4j.Logger
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
+import org.springframework.validation.BeanPropertyBindingResult
+import org.springframework.validation.BindException
+import org.springframework.validation.FieldError
 import java.util.UUID
 
 @Service
@@ -85,13 +88,34 @@ class CategoryService(
      * @param request CreateCategoryRequest - The request object.
      * @return Category - The created category.
      */
-    fun create(request: CreateCategoryRequest): Category = categoryRepository.save(
-        Category(
-            title = request.title,
-            description = request.description,
-            createdUser = userService.getUser()
-        ).apply { setSlug(this) }
-    ).also { log.info("Category created: $it") }
+    @Throws(BindException::class)
+    fun create(request: CreateCategoryRequest): Category = run {
+        val bindingResult = BeanPropertyBindingResult(request, "request")
+        categoryRepository.existsByTitle(request.title!!, null).takeIf { it }?.let {
+            log.error("[Create category] Category already exists with title: ${request.title}")
+            bindingResult.addError(
+                FieldError(
+                    bindingResult.objectName, "title",
+                    messageSourceService.get(
+                        "already_exists_with_param",
+                        arrayOf(messageSourceService.get("category"))
+                    )
+                )
+            )
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw BindException(bindingResult)
+        }
+
+        categoryRepository.save(
+            Category(
+                title = request.title,
+                description = request.description,
+                createdUser = userService.getUser()
+            ).apply { setSlug(this) }
+        ).also { log.info("Category created: $it") }
+    }
 
     /**
      * Update a category.
@@ -100,6 +124,7 @@ class CategoryService(
      * @param request UpdateCategoryRequest - The request object.
      * @return Category - The updated category.
      */
+    @Throws(BindException::class)
     fun update(id: UUID, request: UpdateCategoryRequest): Category = run {
         val category = categoryRepository.findById(id).orElseThrow {
             NotFoundException(
@@ -108,6 +133,24 @@ class CategoryService(
                     arrayOf(messageSourceService.get("category"))
                 )
             )
+        }
+
+        val bindingResult = BeanPropertyBindingResult(request, "request")
+        categoryRepository.existsByTitle(request.title!!, category.id).takeIf { it }?.let {
+            log.error("[Update category] Category already exists with title and id: ${request.title}, ${category.id}")
+            bindingResult.addError(
+                FieldError(
+                    bindingResult.objectName, "title",
+                    messageSourceService.get(
+                        "already_exists_with_param",
+                        arrayOf(messageSourceService.get("category"))
+                    )
+                )
+            )
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw BindException(bindingResult)
         }
 
         request.title?.takeIf { it.isNotEmpty() }?.let { category.title = it }
@@ -127,6 +170,7 @@ class CategoryService(
      * @param request UpdateCategoryRequest - The request object.
      * @return Category - The updated category.
      */
+    @Throws(BindException::class)
     fun update(id: String, request: UpdateCategoryRequest): Category = update(UUID.fromString(id), request)
 
     /**

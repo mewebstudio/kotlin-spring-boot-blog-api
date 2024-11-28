@@ -19,6 +19,7 @@ import org.hibernate.annotations.OnDeleteAction
 @Table(
     name = "tags",
     uniqueConstraints = [
+        UniqueConstraint(columnNames = ["title"], name = "uk_tags_title"),
         UniqueConstraint(columnNames = ["slug"], name = "uk_tags_slug")
     ],
     indexes = [

@@ -21,6 +21,7 @@ import java.time.LocalDateTime
 @Table(
     name = "posts",
     uniqueConstraints = [
+        UniqueConstraint(columnNames = ["title"], name = "uk_posts_title"),
         UniqueConstraint(columnNames = ["slug"], name = "uk_posts_slug")
     ],
     indexes = [

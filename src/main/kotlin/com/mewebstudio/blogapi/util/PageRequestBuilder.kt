@@ -8,12 +8,24 @@ import org.springframework.data.domain.Sort
 object PageRequestBuilder {
     private val log: Logger by logger()
 
+    /**
+     * Builds a PageRequest based on provided pagination and sorting parameters.
+     *
+     * @param page Page number (default: null)
+     * @param size Page size (default: null)
+     * @param sortBy Column to sort by (default: null)
+     * @param sort Sort direction, "asc" or "desc" (default: null)
+     * @param columns Valid columns to sort by (default: null)
+     * @return PageRequest instance
+     * @throws BadRequestException If page or size is invalid
+     */
     fun build(
         page: Int? = null,
         size: Int? = null,
         sortBy: String? = null,
         sort: String? = null,
-        columns: Array<String>? = null): PageRequest {
+        columns: Array<String>? = null
+    ): PageRequest = run {
         if (page == null || page < 1) {
             log.warn("Page number is not valid")
             throw BadRequestException("Page must be greater than 0!")
@@ -26,21 +38,19 @@ object PageRequestBuilder {
 
         var pageRequest = PageRequest.of(page - 1, size)
 
-        if (sortBy != null && sort != null) {
+        if (sortBy != null && sort != null && columns?.contains(sortBy) == true) {
             val direction = getDirection(sort)
-
-            val columnsList = columns?.toList() ?: emptyList()
-            if (columnsList.contains(sortBy)) {
-                pageRequest = pageRequest.withSort(Sort.by(direction, sortBy))
-            }
+            pageRequest = pageRequest.withSort(Sort.by(direction, sortBy))
         }
 
-        return pageRequest
+        pageRequest
     }
 
     /**
-     * @param sort String
-     * @return Sort.Direction
+     * Returns the Sort direction based on the provided string.
+     *
+     * @param sort "asc" or "desc" string
+     * @return Sort.Direction ASC or DESC
      */
     private fun getDirection(sort: String): Sort.Direction {
         return if ("desc".equals(sort, ignoreCase = true)) {

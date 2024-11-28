@@ -1,5 +1,6 @@
 package com.mewebstudio.blogapi.dto.annotation
 
+import com.mewebstudio.blogapi.dto.validator.CheckUUIDValidator
 import jakarta.validation.Constraint
 import jakarta.validation.Payload
 import kotlin.reflect.KClass
@@ -13,7 +14,7 @@ import kotlin.reflect.KClass
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.ANNOTATION_CLASS
 )
-@Constraint(validatedBy = [])
+@Constraint(validatedBy = [CheckUUIDValidator::class])
 @MustBeDocumented
 annotation class CheckUUID(
     val message: String = "UUID has wrong format",

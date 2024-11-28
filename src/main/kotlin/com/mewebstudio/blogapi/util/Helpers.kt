@@ -1,6 +1,7 @@
 package com.mewebstudio.blogapi.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.slugify.Slugify
 
 class Helpers private constructor() {
     companion object {
@@ -56,5 +57,13 @@ class Helpers private constructor() {
                 objectMapper.readValue(content, Map::class.java)
             }
         }
+
+        /**
+         * Generate a slug
+         *
+         * @param value String
+         * @return String
+         */
+        fun generateSlug(value: String?): String = Slugify.builder().transliterator(true).build().slugify(value)
     }
 }

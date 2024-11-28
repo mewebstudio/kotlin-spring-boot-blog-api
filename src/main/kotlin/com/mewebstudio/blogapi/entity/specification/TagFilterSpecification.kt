@@ -1,7 +1,7 @@
 package com.mewebstudio.blogapi.entity.specification
 
-import com.mewebstudio.blogapi.entity.Category
-import com.mewebstudio.blogapi.entity.specification.criteria.CategoryCriteria
+import com.mewebstudio.blogapi.entity.Tag
+import com.mewebstudio.blogapi.entity.specification.criteria.TagCriteria
 import com.mewebstudio.blogapi.entity.specification.criteria.SpecificationHelper
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
@@ -10,9 +10,9 @@ import jakarta.persistence.criteria.Root
 import org.springframework.data.jpa.domain.Specification
 import java.util.*
 
-class CategoryFilterSpecification(private val criteria: CategoryCriteria) : Specification<Category> {
+class TagFilterSpecification(private val criteria: TagCriteria) : Specification<Tag> {
     override fun toPredicate(
-        root: Root<Category>,
+        root: Root<Tag>,
         query: CriteriaQuery<*>?,
         criteriaBuilder: CriteriaBuilder
     ): Predicate? {
@@ -25,7 +25,7 @@ class CategoryFilterSpecification(private val criteria: CategoryCriteria) : Spec
             val qPattern = "%${q.lowercase(Locale.getDefault())}%"
             predicates.add(
                 SpecificationHelper.addSearchPredicate(
-                    root, criteriaBuilder, qPattern, listOf("id", "title", "slug", "description")
+                    root, criteriaBuilder, qPattern, listOf("id", "title", "slug")
                 )
             )
         }

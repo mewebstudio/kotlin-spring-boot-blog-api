@@ -69,7 +69,7 @@ data class UserResponse(
         requiredMode = RequiredMode.REQUIRED,
         example = "[\"user\"]"
     )
-    val roles: Array<String>,
+    val roles: Array<String> = emptyArray(),
 
     @Schema(
         name = "blockedAt",
@@ -77,7 +77,7 @@ data class UserResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.NOT_REQUIRED
     )
-    val blockedAt: LocalDateTime?,
+    val blockedAt: LocalDateTime? = null,
 
     @Schema(
         name = "emailVerifiedAt",
@@ -85,7 +85,23 @@ data class UserResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.NOT_REQUIRED
     )
-    val emailVerifiedAt: LocalDateTime?,
+    val emailVerifiedAt: LocalDateTime? = null,
+
+    @Schema(
+        name = "createdUser",
+        description = "Created user",
+        type = "UserResponse",
+        requiredMode = RequiredMode.NOT_REQUIRED
+    )
+    var createdUser: UserResponse? = null,
+
+    @Schema(
+        name = "updatedUser",
+        description = "Updated user",
+        type = "UserResponse",
+        requiredMode = RequiredMode.NOT_REQUIRED
+    )
+    var updatedUser: UserResponse? = null,
 
     @Schema(
         name = "createdAt",
@@ -93,7 +109,7 @@ data class UserResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.REQUIRED
     )
-    val createdAt: LocalDateTime?,
+    val createdAt: LocalDateTime? = null,
 
     @Schema(
         name = "updatedAt",
@@ -101,10 +117,10 @@ data class UserResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.REQUIRED
     )
-    val updatedAt: LocalDateTime?
+    val updatedAt: LocalDateTime? = null
 ) : AbstractBaseResponse() {
     companion object {
-        fun convert(user: User): UserResponse = UserResponse(
+        fun convert(user: User, isDetailed: Boolean): UserResponse = UserResponse(
             id = user.id.toString(),
             firstname = user.firstname,
             lastname = user.lastname,
@@ -116,7 +132,18 @@ data class UserResponse(
             emailVerifiedAt = user.emailVerifiedAt,
             createdAt = user.createdAt,
             updatedAt = user.updatedAt
-        )
+        ).apply {
+            isDetailed.takeIf { it }?.run {
+                createdUser = user.createdUser?.let { convertForRelation(it) }
+                updatedUser = user.updatedUser?.let { convertForRelation(it) }
+            }
+        }
+
+        fun convert(user: User): UserResponse = convert(user, true)
+
+        fun convertForList(user: User): UserResponse = convert(user, false)
+
+        fun convertForRelation(user: User): UserResponse = convert(user, false)
     }
 
     override fun equals(other: Any?): Boolean = run {

@@ -409,13 +409,13 @@
 									],
 									"query": [
 										{
-											"key": "roles",
-											"value": "admin,user",
+											"key": "createdUsers",
+											"value": "{{userId}},{{userId2}}",
 											"disabled": true
 										},
 										{
-											"key": "genders",
-											"value": "male,female,diverse,unknown",
+											"key": "updatedUsers",
+											"value": "{{userId}},{{userId2}}",
 											"disabled": true
 										},
 										{
@@ -465,7 +465,17 @@
 										},
 										{
 											"key": "q",
-											"value": "doe",
+											"value": "xx",
+											"disabled": true
+										},
+										{
+											"key": "roles",
+											"value": "admin,user",
+											"disabled": true
+										},
+										{
+											"key": "genders",
+											"value": "male,female,diverse,unknown",
 											"disabled": true
 										}
 									]
@@ -633,11 +643,13 @@
 											"",
 											"    const response = pm.response.json()",
 											"    pm.collectionVariables.set(\"categoryId\", response.items[0].id);",
+											"    pm.collectionVariables.set(\"categorySlug\", response.items[0].id);",
 											"",
 											"    if (response.items.length > 1) {",
 											"        response.items.forEach((item, index) => {",
 											"            if (index !== 0) {",
 											"                pm.collectionVariables.set(`categoryId${index + 1}`, item.id);",
+											"                pm.collectionVariables.set(`categorySlug${index + 1}`, item.id);",
 											"            }",
 											"        });",
 											"    }",
@@ -662,8 +674,13 @@
 									],
 									"query": [
 										{
-											"key": "roles",
-											"value": "admin,user",
+											"key": "createdUsers",
+											"value": "{{userId}},{{userId2}}",
+											"disabled": true
+										},
+										{
+											"key": "updatedUsers",
+											"value": "{{userId}},{{userId2}}",
 											"disabled": true
 										},
 										{
@@ -674,6 +691,11 @@
 										{
 											"key": "createdAtEnd",
 											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "updatedAtStart",
+											"value": "2023-11-06T21:28:00.984392",
 											"disabled": true
 										},
 										{
@@ -856,6 +878,257 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Tags",
+					"item": [
+						{
+							"name": "List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200)",
+											"",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"tagId\", response.items[0].id);",
+											"    pm.collectionVariables.set(\"tagSlug\", response.items[0].islug);",
+											"",
+											"    if (response.items.length > 1) {",
+											"        response.items.forEach((item, index) => {",
+											"            if (index !== 0) {",
+											"                pm.collectionVariables.set(`tagId${index + 1}`, item.id);",
+											"                pm.collectionVariables.set(`tagSlug${index + 1}`, item.id);",
+											"            }",
+											"        });",
+											"    }",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/tags",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"tags"
+									],
+									"query": [
+										{
+											"key": "createdUsers",
+											"value": "{{userId}},{{userId2}}",
+											"disabled": true
+										},
+										{
+											"key": "updatedUsers",
+											"value": "{{userId}},{{userId2}}",
+											"disabled": true
+										},
+										{
+											"key": "createdAtStart",
+											"value": "2023-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "createdAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "updatedAtStart",
+											"value": "2023-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "updatedAtEnd",
+											"value": "2025-11-06T21:28:00.984392",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "asc",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt",
+											"disabled": true
+										},
+										{
+											"key": "q",
+											"value": "lorem",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201)",
+											"",
+											"    const response = pm.response.json()",
+											"    pm.collectionVariables.set(\"tagId\", response.id)",
+											"    pm.collectionVariables.set(\"tagSlug\", response.slug)",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Lorem ipsum\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/tags",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/tags/{{tagSlug}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"tags",
+										"{{tagSlug}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Lorem ipsum\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/tags/{{tagId}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"tags",
+										"{{tagId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/tags/{{tagId}}",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"tags",
+										"{{tagId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			],
 			"auth": {
@@ -986,6 +1259,62 @@
 		},
 		{
 			"key": "categoryId12",
+			"value": ""
+		},
+		{
+			"key": "tagId",
+			"value": ""
+		},
+		{
+			"key": "tagSlug",
+			"value": ""
+		},
+		{
+			"key": "userId3",
+			"value": ""
+		},
+		{
+			"key": "categorySlug2",
+			"value": ""
+		},
+		{
+			"key": "categorySlug3",
+			"value": ""
+		},
+		{
+			"key": "categorySlug4",
+			"value": ""
+		},
+		{
+			"key": "categorySlug5",
+			"value": ""
+		},
+		{
+			"key": "categorySlug6",
+			"value": ""
+		},
+		{
+			"key": "categorySlug7",
+			"value": ""
+		},
+		{
+			"key": "categorySlug8",
+			"value": ""
+		},
+		{
+			"key": "categorySlug9",
+			"value": ""
+		},
+		{
+			"key": "categorySlug10",
+			"value": ""
+		},
+		{
+			"key": "categorySlug11",
+			"value": ""
+		},
+		{
+			"key": "categorySlug12",
 			"value": ""
 		}
 	]

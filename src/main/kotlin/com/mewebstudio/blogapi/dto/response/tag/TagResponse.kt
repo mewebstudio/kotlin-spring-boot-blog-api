@@ -1,13 +1,14 @@
-package com.mewebstudio.blogapi.dto.response.category
+package com.mewebstudio.blogapi.dto.response.tag
 
 import com.mewebstudio.blogapi.dto.response.AbstractBaseResponse
 import com.mewebstudio.blogapi.dto.response.user.UserResponse
-import com.mewebstudio.blogapi.entity.Category
+import com.mewebstudio.blogapi.dto.response.user.UserResponse.Companion.convertForRelation
+import com.mewebstudio.blogapi.entity.Tag
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import java.time.LocalDateTime
 
-data class CategoryResponse(
+data class TagResponse(
     @Schema(
         name = "id",
         description = "ID",
@@ -36,15 +37,6 @@ data class CategoryResponse(
     val slug: String? = null,
 
     @Schema(
-        name = "description",
-        description = "Description",
-        type = "String",
-        requiredMode = RequiredMode.NOT_REQUIRED,
-        example = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    )
-    val description: String? = null,
-
-    @Schema(
         name = "createdUser",
         description = "Created user",
         type = "UserResponse",
@@ -66,7 +58,7 @@ data class CategoryResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.REQUIRED
     )
-    val createdAt: LocalDateTime? = null,
+    val createdAt: LocalDateTime?,
 
     @Schema(
         name = "updatedAt",
@@ -74,33 +66,32 @@ data class CategoryResponse(
         type = "LocalDateTime",
         requiredMode = RequiredMode.REQUIRED
     )
-    val updatedAt: LocalDateTime? = null
+    val updatedAt: LocalDateTime?
 ) : AbstractBaseResponse() {
     companion object {
-        fun convert(category: Category, isDetailed: Boolean): CategoryResponse = CategoryResponse(
-            id = category.id.toString(),
-            title = category.title,
-            slug = category.slug,
-            description = category.description,
-            createdAt = category.createdAt,
-            updatedAt = category.updatedAt
+        fun convert(tag: Tag, isDetailed: Boolean): TagResponse = TagResponse(
+            id = tag.id.toString(),
+            title = tag.title,
+            slug = tag.slug,
+            createdAt = tag.createdAt,
+            updatedAt = tag.updatedAt
         ).apply {
             isDetailed.takeIf { it }?.run {
-                createdUser = category.createdUser?.let { UserResponse.convertForRelation(it) }
-                updatedUser = category.updatedUser?.let { UserResponse.convertForRelation(it) }
+                createdUser = tag.createdUser?.let { convertForRelation(it) }
+                updatedUser = tag.updatedUser?.let { convertForRelation(it) }
             }
         }
 
-        fun convert(category: Category): CategoryResponse = convert(category, true)
+        fun convert(tag: Tag): TagResponse = convert(tag, true)
 
-        fun convertForList(category: Category): CategoryResponse = convert(category, false)
+        fun convertForList(tag: Tag): TagResponse = convert(tag, false)
     }
 
     override fun equals(other: Any?): Boolean = run {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CategoryResponse
+        other as TagResponse
 
         id == other.id
     }

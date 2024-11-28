@@ -54,7 +54,7 @@ secure token storage.
     - Implement CRUD operations for categories.
     - Allow categorization of posts.
 
-- [ ] **Tag Management**
+- [X] **Tag Management**
     - Implement CRUD operations for tags.
     - Enable tagging posts with multiple tags.
 

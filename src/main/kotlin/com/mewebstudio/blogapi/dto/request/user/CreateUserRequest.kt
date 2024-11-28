@@ -1,6 +1,5 @@
 package com.mewebstudio.blogapi.dto.request.user
 
-import com.mewebstudio.blogapi.dto.annotation.MinListSize
 import com.mewebstudio.blogapi.dto.annotation.Password
 import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
 import com.mewebstudio.blogapi.util.Enums
@@ -82,7 +81,7 @@ data class CreateUserRequest(
     override var passwordConfirm: String? = null,
 
     @field:NotEmpty(message = "{not_blank}")
-    @field:MinListSize(min = 1, message = "{min_list_size}")
+    @field:Size(min = 1, message = "{min_list_size}")
     @field:ValueOfEnum(enumClass = Enums.RoleEnum::class)
     @Schema(
         name = "roles",

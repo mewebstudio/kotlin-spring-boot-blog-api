@@ -81,7 +81,7 @@ class CategoryController(private val categoryService: CategoryService) {
                 pages = categories.totalPages,
                 size = categories.size,
                 total = categories.totalElements,
-                items = categories.map { CategoryResponse.convert(it) }.toList()
+                items = categories.map { CategoryResponse.convertForList(it) }.toList()
             )
         )
     }

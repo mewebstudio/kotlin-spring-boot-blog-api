@@ -9,8 +9,11 @@ import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(
@@ -29,6 +32,26 @@ class Tag(
 
     @Column(name = "slug", nullable = false, columnDefinition = "text")
     var slug: String? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "created_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_tags_created_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var createdUser: User? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "updated_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_tags_updated_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var updatedUser: User? = null,
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.DETACH])
     @JoinTable(

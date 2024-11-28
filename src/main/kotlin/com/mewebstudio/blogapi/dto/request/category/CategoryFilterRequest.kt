@@ -1,14 +1,33 @@
 package com.mewebstudio.blogapi.dto.request.category
 
+import com.mewebstudio.blogapi.dto.annotation.CheckUUID
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.springframework.data.domain.Sort
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 data class CategoryFilterRequest(
+    @field:Size(min = 1, message = "{min_list_size}")
+    @field:CheckUUID(message = "{invalid_uuid}")
+    @field:Parameter(
+        name = "createdUsers",
+        description = "Created users",
+        example = "6f319190-2efd-4d8c-9ba8-f1db7ef0a355,51ecc236-09dd-4d15-bb05-bc1343b4e934",
+    )
+    val createdUsers: List<String>? = null,
+
+    @field:Size(min = 1, message = "{min_list_size}")
+    @field:Parameter(
+        name = "updatedUsers",
+        description = "Updated users",
+        example = "6f319190-2efd-4d8c-9ba8-f1db7ef0a355,51ecc236-09dd-4d15-bb05-bc1343b4e934",
+    )
+    val updatedUsers: List<String>? = null,
+
     @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @field:Parameter(
         name = "createdAtStart",
@@ -65,7 +84,7 @@ data class CategoryFilterRequest(
     val size: Int = 20,
 
     @field:Pattern(
-        regexp = "id|email|firstname|lastname|gender|blockedAt|createdAt|updatedAt",
+        regexp = "id|title|slug|description|createdAt|updatedAt",
         message = "{invalid_sort_by_column}"
     )
     @field:Parameter(
@@ -74,7 +93,7 @@ data class CategoryFilterRequest(
         example = "createdAt",
         schema = Schema(
             type = "String",
-            allowableValues = ["id", "email", "firstname", "lastname", "gender", "blockedAt", "createdAt", "updatedAt"],
+            allowableValues = ["id", "title", "slug", "description", "blockedAt", "createdAt", "updatedAt"],
             defaultValue = "createdAt"
         )
     )

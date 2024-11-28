@@ -1,6 +1,5 @@
 package com.mewebstudio.blogapi.service
 
-import com.github.slugify.Slugify
 import com.mewebstudio.blogapi.dto.request.category.CategoryFilterRequest
 import com.mewebstudio.blogapi.dto.request.category.CreateCategoryRequest
 import com.mewebstudio.blogapi.dto.request.category.UpdateCategoryRequest
@@ -9,6 +8,7 @@ import com.mewebstudio.blogapi.entity.specification.CategoryFilterSpecification
 import com.mewebstudio.blogapi.entity.specification.criteria.CategoryCriteria
 import com.mewebstudio.blogapi.exception.NotFoundException
 import com.mewebstudio.blogapi.repository.CategoryRepository
+import com.mewebstudio.blogapi.util.Helpers
 import com.mewebstudio.blogapi.util.PageRequestBuilder
 import com.mewebstudio.blogapi.util.logger
 import org.slf4j.Logger
@@ -19,6 +19,7 @@ import java.util.UUID
 @Service
 class CategoryService(
     private val categoryRepository: CategoryRepository,
+    private val userService: UserService,
     private val messageSourceService: MessageSourceService
 ) {
     private val log: Logger by logger()
@@ -33,6 +34,8 @@ class CategoryService(
         categoryRepository.findAll(
             CategoryFilterSpecification(
                 CategoryCriteria(
+                    createdUsers = request.createdUsers?.map { it },
+                    updatedUsers = request.updatedUsers?.map { it },
                     createdAtStart = request.createdAtStart,
                     createdAtEnd = request.createdAtEnd,
                     q = request.q
@@ -85,7 +88,8 @@ class CategoryService(
     fun create(request: CreateCategoryRequest): Category = categoryRepository.save(
         Category(
             title = request.title,
-            description = request.description
+            description = request.description,
+            createdUser = userService.getUser()
         ).apply { setSlug(this) }
     ).also { log.info("Category created: $it") }
 
@@ -108,7 +112,10 @@ class CategoryService(
 
         request.title?.takeIf { it.isNotEmpty() }?.let { category.title = it }
         request.description?.takeIf { it.isNotEmpty() }?.let { category.description = it }
-        category.apply { setSlug(this) }
+        category.apply {
+            updatedUser = userService.getUser()
+            setSlug(this)
+        }
 
         categoryRepository.save(category).also { log.info("Category updated: $category") }
     }
@@ -146,8 +153,7 @@ class CategoryService(
      * @param category Category
      */
     private fun setSlug(category: Category) {
-        val slugify = Slugify.builder().transliterator(true).build()
-        val baseSlug = slugify.slugify(category.title)
+        val baseSlug = Helpers.generateSlug(category.title)
         val count = categoryRepository.countSlugsStartingWith(baseSlug, category.id)
 
         category.slug = if (count > 0) {

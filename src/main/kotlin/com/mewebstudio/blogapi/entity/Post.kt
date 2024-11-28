@@ -30,16 +30,6 @@ import java.time.LocalDateTime
     ]
 )
 class Post(
-    @ManyToOne(optional = false)
-    @JoinColumn(
-        name = "user_id",
-        referencedColumnName = "id",
-        nullable = false,
-        foreignKey = ForeignKey(name = "fk_posts_user_id")
-    )
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    var user: User? = null,
-
     @Column(name = "title", nullable = false)
     var title: String? = null,
 
@@ -51,6 +41,26 @@ class Post(
 
     @Column(name = "published_at")
     var publishedAt: LocalDateTime? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "created_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_posts_created_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var createdUser: User? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "updated_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_posts_updated_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var updatedUser: User? = null,
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.DETACH])
     @JoinTable(
@@ -104,5 +114,5 @@ class Post(
     )
     var tags: List<Tag> = arrayListOf(),
 ) : AbstractBaseEntity() {
-    override fun toString(): String = this::class.simpleName + "(id = $id, user = $user)"
+    override fun toString(): String = this::class.simpleName + "(id = $id, title = $title)"
 }

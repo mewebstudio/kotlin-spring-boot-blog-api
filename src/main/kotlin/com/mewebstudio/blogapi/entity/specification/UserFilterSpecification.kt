@@ -15,6 +15,9 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
     override fun toPredicate(root: Root<User>, query: CriteriaQuery<*>?, criteriaBuilder: CriteriaBuilder): Predicate? {
         val predicates = mutableListOf<Predicate>()
 
+        SpecificationHelper.addCreatedAndUpdatedUserPredicates(criteria, root, criteriaBuilder, predicates)
+        SpecificationHelper.addDateRangePredicates(criteria, root, criteriaBuilder, predicates)
+
         criteria.roles?.takeIf { it.isNotEmpty() }?.let {
             predicates.add(buildRolePredicate(root, criteriaBuilder, it))
         }
@@ -26,8 +29,6 @@ class UserFilterSpecification(private val criteria: UserCriteria) : Specificatio
         criteria.isBlocked?.let {
             predicates.add(criteriaBuilder.equal(root.get<Boolean>("blockedAt").isNotNull(), it))
         }
-
-        SpecificationHelper.addDateRangePredicates(criteria, root, criteriaBuilder, predicates)
 
         criteria.q?.let { q ->
             val qPattern = "%${q.lowercase(Locale.getDefault())}%"

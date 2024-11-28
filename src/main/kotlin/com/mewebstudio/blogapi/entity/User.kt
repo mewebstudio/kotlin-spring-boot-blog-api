@@ -9,13 +9,18 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
+import jakarta.persistence.ForeignKey
 import jakarta.persistence.Index
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.hibernate.type.SqlTypes
 import java.time.LocalDateTime
 
@@ -56,10 +61,6 @@ class User(
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("createdAt ASC")
-    var posts: List<Post> = arrayListOf(),
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    @OrderBy("createdAt ASC")
     var comments: List<Comment> = arrayListOf(),
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -72,7 +73,59 @@ class User(
     var blockedAt: LocalDateTime? = null,
 
     @Column(name = "email_verified_at")
-    var emailVerifiedAt: LocalDateTime? = null
+    var emailVerifiedAt: LocalDateTime? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "created_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_users_created_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var createdUser: User? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(
+        name = "updated_user_id",
+        referencedColumnName = "id",
+        nullable = true,
+        foreignKey = ForeignKey(name = "fk_users_updated_user_id")
+    )
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var updatedUser: User? = null,
+
+    @OneToMany(mappedBy = "createdUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var createdUsers: List<User> = arrayListOf(),
+
+    @OneToMany(mappedBy = "updatedUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var updatedUsers: List<User> = arrayListOf(),
+
+    @OneToMany(mappedBy = "createdUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var createdCategories: List<Category> = arrayListOf(),
+
+    @OneToMany(mappedBy = "updatedUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var updatedCategories: List<Category> = arrayListOf(),
+
+    @OneToMany(mappedBy = "createdUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var createdTags: List<Tag> = arrayListOf(),
+
+    @OneToMany(mappedBy = "updatedUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var updatedTags: List<Tag> = arrayListOf(),
+
+    @OneToMany(mappedBy = "createdUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var createdPosts: List<Post> = arrayListOf(),
+
+    @OneToMany(mappedBy = "updatedUser", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OrderBy("createdAt ASC")
+    var updatedPosts: List<Post> = arrayListOf(),
 ) : AbstractBaseEntity() {
     fun getFullName(): String = "$firstname $lastname"
 

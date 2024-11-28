@@ -1,10 +1,7 @@
-package com.mewebstudio.blogapi.dto.request.user
+package com.mewebstudio.blogapi.dto.request.tag
 
 import com.mewebstudio.blogapi.dto.annotation.CheckUUID
-import com.mewebstudio.blogapi.dto.annotation.ValueOfEnum
-import com.mewebstudio.blogapi.util.Enums
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Pattern
@@ -13,31 +10,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
-data class UserFilterRequest(
-    @field:Size(min = 1, message = "{min_list_size}")
-    @field:ValueOfEnum(enumClass = Enums.RoleEnum::class)
-    @field:Parameter(
-        name = "roles",
-        description = "roles",
-        example = "admin,user",
-        array = ArraySchema(
-            schema = Schema(type = "string", allowableValues = ["admin", "user"])
-        )
-    )
-    val roles: List<String>? = null,
-
-    @field:Size(min = 1, message = "{min_list_size}")
-    @field:ValueOfEnum(enumClass = Enums.GenderEnum::class)
-    @field:Parameter(
-        name = "genders",
-        description = "Genders",
-        example = "male,female,diverse,unknown",
-        array = ArraySchema(
-            schema = Schema(type = "string", allowableValues = ["male", "female", "diverse", "unknown"])
-        )
-    )
-    val genders: List<String>? = null,
-
+data class TagFilterRequest(
     @field:Size(min = 1, message = "{min_list_size}")
     @field:CheckUUID(message = "{invalid_uuid}")
     @field:Parameter(
@@ -88,13 +61,6 @@ data class UserFilterRequest(
     val updatedAtEnd: LocalDateTime? = null,
 
     @field:Parameter(
-        name = "isBlocked",
-        description = "Is blocked?",
-        example = "true"
-    )
-    val isBlocked: Boolean? = null,
-
-    @field:Parameter(
         name = "q",
         description = "Search keyword",
         example = "lorem"
@@ -118,7 +84,7 @@ data class UserFilterRequest(
     val size: Int = 20,
 
     @field:Pattern(
-        regexp = "id|email|firstname|lastname|gender|blockedAt|createdAt|updatedAt",
+        regexp = "id|title|slug|createdAt|updatedAt",
         message = "{invalid_sort_by_column}"
     )
     @field:Parameter(
@@ -127,7 +93,7 @@ data class UserFilterRequest(
         example = "createdAt",
         schema = Schema(
             type = "String",
-            allowableValues = ["id", "email", "firstname", "lastname", "gender", "blockedAt", "createdAt", "updatedAt"],
+            allowableValues = ["id", "title", "slug", "blockedAt", "createdAt", "updatedAt"],
             defaultValue = "createdAt"
         )
     )

@@ -2,7 +2,7 @@ package com.mewebstudio.blogapi.entity.specification.criteria
 
 import java.time.LocalDateTime
 
-data class CategoryCriteria(
+data class TagCriteria(
     override var q: String? = null,
     override var createdUsers: List<String>? = null,
     override var updatedUsers: List<String>? = null,

@@ -70,6 +70,8 @@ class UserService(
                 UserCriteria(
                     roles = request.roles?.map { Helpers.searchEnum(Enums.RoleEnum::class.java, it)!! },
                     genders = request.genders?.map { Helpers.searchEnum(Enums.GenderEnum::class.java, it)!! },
+                    createdUsers = request.createdUsers?.map { it },
+                    updatedUsers = request.updatedUsers?.map { it },
                     createdAtStart = request.createdAtStart,
                     createdAtEnd = request.createdAtEnd,
                     isBlocked = request.isBlocked,
@@ -219,6 +221,7 @@ class UserService(
         user.roles = request.roles!!.map { it.uppercase() }
         user.blockedAt = request.isBlocked?.let { if (it) LocalDateTime.now() else null }
         user.emailVerifiedAt = request.isEmailVerified?.let { if (it) LocalDateTime.now() else null }
+        user.createdUser = getUser()
 
         create(user)
     }
@@ -294,6 +297,8 @@ class UserService(
         request.isBlocked?.let {
             user.blockedAt = if (it) LocalDateTime.now() else null
         }
+
+        user.updatedUser = getUser()
 
         userRepository.save(user).also { log.info("User updated: $user") }
     }
@@ -373,9 +378,9 @@ class UserService(
      */
     private fun updateEqualFields(request: IUserRequest, user: User) {
         val bindingResult = BeanPropertyBindingResult(request, "request")
-        request.email?.takeIf { it.isNotEmpty() && !it.equals(user.email, ignoreCase = true) }?.let { it ->
-            userRepository.findByEmailAndIdNot(it.lowercase(), user.id!!)?.let {
-                log.error("User with email: $it already exists")
+        request.email?.takeIf { it.isNotEmpty() && !it.equals(user.email, ignoreCase = true) }?.let {
+            userRepository.findByEmailAndIdNot(it.lowercase(), user.id!!)?.let { existingUser ->
+                log.error("User with email: $existingUser already exists")
                 bindingResult.addError(
                     FieldError(
                         bindingResult.objectName, "email",

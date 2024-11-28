@@ -22,5 +22,5 @@ data class UpdateCategoryRequest(
         requiredMode = Schema.RequiredMode.NOT_REQUIRED,
         example = "DOE"
     )
-    var description: String?,
+    var description: String?
 )
